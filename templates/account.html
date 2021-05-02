@@ -15,16 +15,75 @@
 		<div class="row">
 			<div class="col-6">
 				<div class="logo">
-					<p>Bank of Irvine</p>
+					<p class="text-info" style="font-size: 1rem;font-weight: bold;">Bank of Irvine</p>
 				</div>
 			</div>
-			<div class="col-3">
-				<div class="suport text-center">
-					<button class="btn btn-outline-primary" onclick="Logout()">LOGOUT</button>						
+			<div class="col-6">
+				<div class="suport text-right">
+					<button class="btn-sm btn-outline-info" onclick="Logout()">LOGOUT</button>						
 				</div>
 			</div>
 		</div>
-    </div>
+    </div><!--end container--->
+
+	<div class="container " style="background: #efefef; " >
+		<div class="row ">
+			<div class="col-sm-12 col-md-6 " id="content">
+
+				<div class="box_content_left  p-2  mt-4 ">
+
+					<div class="account shadow-sm p-3 bg-white rounded">
+						<p style="font-weight: bold;margin-top: 1rem;font-size: 1.5rem" class="text-info">ACCOUNT DETAILS</p>
+						<div class="info_acount">
+							<p style="float: left;font-size: 1rem;font-weight: bold;">Account Holder</p>
+							<p style="float: right;font-size: 1rem;font-weight: bold;">Name</p>
+						</div>
+                        <div class="info_acount" style="clear: left;">
+							<p style="float: left;font-size: 1rem;font-weight: bold;">Balance</p>
+							<p style="float: right;font-size: 1rem;font-weight: bold;">$30</p>
+						</div>					
+                        
+                        <!--Div below is empty used only to make elements look good on the page-->
+                        <div class="info_acount" style="clear: left;">
+							<p style="float: left;font-size: 1rem;font-weight: bold;"></p>
+							<p style="float: right;font-size: 1rem;font-weight: bold;" class="text-info" id="typemoney"></p>
+						</div>
+					</div>
+				</div>
+			</div><!--end col mid 6-->
+
+			<div class="col-sm-12 col-md-6 p-2  mt-4" id="content2">
+				<div class="payment p-3 shadow-sm p-3 mb-4 bg-white rounded">					
+					<p style="font-weight: bold;margin-top: 1rem;font-size: 1.5rem" class="text-info">PAYMENT</p>
+					<div class="addmoney">
+						<p style="margin-bottom: 0.5rem;">Deposit</p>
+						<div class="input-group mb-2 float-left" style="width: 75%;">
+        					<div class="input-group-prepend">
+          						<div class="input-group-text">$</div>
+        					</div>
+        						<input type="number" name="balance" id="Depositinput" value="" class="form-control" id="inlineFormInputGroup" placeholder="Enter amount to Deposit">
+      					</div>     				
+      						<button type="button" class="btn btn-info float-right" data-toggle="modal" data-target=".bd-example-modal-sm" onclick="Deposit()">Deposit</button>
+					</div>
+
+					<div class="addmoney">
+						<p style="margin-bottom: 0.5rem;clear: left;">Withdraw</p>
+						<div class="input-group mb-2 float-left" style="width: 75%;">
+        					<div class="input-group-prepend">
+          						<div class="input-group-text">$</div>
+        					</div>
+        					<input type="number" name="balance" id="Withdrawalinput" value="" class="form-control" id="inlineFormInputGroup" placeholder="Enter amount to Withdraw" >
+      					</div>
+      					<button type="button" class="btn btn-info float-right" data-toggle="modal" data-target=".bd-example-modal-sm" onclick="Withdrawal()">Withdraw</button>
+					</div>
+
+				<div class="exmoney mt-2">
+					<p class="mt-3 " style="margin-bottom: 0.5rem;clear: left;"></p>
+				</div>
+			</div><!--payment section-->				
+		</div><!--end col mid 6-->
+	</div><!--end row-->
+</div><!--end container-->   
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
