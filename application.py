@@ -21,10 +21,10 @@ def create_db():
     cur.execute("DROP TABLE IF EXISTS Users")
     cur.execute("DROP TABLE IF EXISTS Accounts")
     cur.execute("PRAGMA foreign_keys = ON")
-    cur.execute("CREATE TABLE IF NOT EXISTS Users(userId INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT, email TEXT, name TEXT, address TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS Users(userId INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT, name TEXT)")
     cur.execute("CREATE TABLE IF NOT EXISTS Accounts(accountId INTEGER PRIMARY KEY AUTOINCREMENT, currentBalance REAL, userId INTEGER, FOREIGN KEY(userId) REFERENCES Users(userId))")
     #insert a new user with auto-assigned userId=1
-    cur.execute('INSERT INTO Users(username, password, email, name) VALUES(?, ?, ?, ?)', ( 'testuser', '012345', 'test@gmail.com', 'testname'))
+    cur.execute('INSERT INTO Users(username, password, name) VALUES(?, ?, ?)', ( 'testuser', '012345', 'testname'))
     # insert an account for user with accountId = 1 auto-assigned and userId=1
     cur.execute('INSERT INTO Accounts(currentBalance, userId) VALUES(?, ?)', (5000, 1))
 
