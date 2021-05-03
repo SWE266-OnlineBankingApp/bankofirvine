@@ -20,10 +20,14 @@ def create_db():
     cur = conn.cursor()
     cur.execute("DROP TABLE IF EXISTS Users")
     cur.execute("DROP TABLE IF EXISTS Accounts")
-    cur.execute("CREATE TABLE IF NOT EXISTS Users(id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT, email TEXT, name TEXT, AccountNo INTEGER UNIQUE, address TEXT )")
-    cur.execute("CREATE TABLE IF NOT EXISTS Accounts(id INTEGER PRIMARY KEY AUTOINCREMENT, AccountNo INTEGER UNIQUE REFERENCES User(AccountNo), currentBalance REAL)")
-    cur.execute('INSERT INTO Users(username, password, email, name, AccountNo, address) VALUES(?, ?, ?, ?, ?, ?)', ( 'testuser', '012345', 'test@gmail.com', 'testname', 1111111111, '1000 Palo Verde Road, Irvine'))
-    cur.execute('INSERT INTO Accounts(AccountNo, currentBalance) VALUES(?, ?)', (2222222222, 5000))
+    cur.execute("PRAGMA foreign_keys = ON")
+    cur.execute("CREATE TABLE IF NOT EXISTS Users(userId INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT, email TEXT, name TEXT, address TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS Accounts(accountId INTEGER PRIMARY KEY AUTOINCREMENT, AccountNo INTEGER UNIQUE, currentBalance REAL, userId INTEGER, FOREIGN KEY(userId) REFERENCES Users(userId))")
+    #insert a new user with auto-assigned userId=1
+    cur.execute('INSERT INTO Users(username, password, email, name, address) VALUES(?, ?, ?, ?, ?)', ( 'testuser', '012345', 'test@gmail.com', 'testname', '1000 Palo Verde Road, Irvine'))
+    # insert an account for user with userId=1
+    cur.execute('INSERT INTO Accounts(AccountNo, currentBalance, userId) VALUES(?, ?, ?)', (2222222222, 5000, 1))
+
     conn.commit()
     cur.close()
 
