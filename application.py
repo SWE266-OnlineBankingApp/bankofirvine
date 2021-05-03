@@ -1,10 +1,22 @@
 import sqlite3
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/', methods=["GET","POST"])
 def home():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        print(username, password)
+        #code to check against DB 
+        #assuming invalid
+        feedback = f"Username or Password is invalid"
+        return render_template('home.html',feedback=feedback)
+       
+        # assuming correct
+        #return redirect('account')
+
     return render_template('home.html')
 
 @app.route('/register')
