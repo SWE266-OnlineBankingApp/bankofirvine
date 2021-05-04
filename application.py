@@ -5,7 +5,9 @@ app = Flask(__name__)
 
 @app.route('/', methods=["GET","POST"])
 def home():
+    app.logger.debug("Home page accessed")
     if request.method == "POST":
+        app.logger.debug("Home page accessed with POST")
         username = request.form.get("username")
         password = request.form.get("password")
          
@@ -18,6 +20,7 @@ def home():
         conn.close()
    
         if(not userid):
+            app.logger.error("On Login details not found for username = {}, password= {}".format(username, password))
             feedback = f"Username or Password is invalid"
             return render_template('home.html',feedback=feedback)
         else:        
@@ -27,12 +30,13 @@ def home():
 
 @app.route('/register')
 def register():
+    app.logger.debug("New Registration")
     return render_template('register.html')    
 
 @app.route('/account/<userid>')
 def account(userid):
     #userid will be encoded needs to be decoded first
-
+    app.logger.debug("Account access by {}".format(userid))
     conn = sqlite3.connect('bankdata.db')
     cur = conn.cursor()    
     name = cur.execute("select name from Users where userid= ? ",[userid]).fetchone()
@@ -40,6 +44,7 @@ def account(userid):
     conn.close()
 
     if(name == None or balance == None):
+        app.logger.error("Account query had empty result for {}".format(userid))
         feedback = f"Something went wrong please login again"
         return render_template('home.html',feedback = feedback)
     
@@ -47,6 +52,7 @@ def account(userid):
 
 
 def create_db():
+    app.logger.debug("Initiate DB creation")
     conn = sqlite3.connect('bankdata.db')
     cur = conn.cursor()
     cur.execute("DROP TABLE IF EXISTS Users")
@@ -61,7 +67,7 @@ def create_db():
 
     conn.commit()
     cur.close()
-
+    app.logger.debug("DB Created")
 # run the app.
 if __name__ == "__main__":
     app.debug = True
