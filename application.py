@@ -1,4 +1,6 @@
 import sqlite3
+import hashlib
+import os
 from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
@@ -10,14 +12,31 @@ def home():
         password = request.form.get("password")
         print(username, password)
         #code to check against DB 
-        #assuming invalid
-        feedback = f"Username or Password is invalid"
-        return render_template('home.html',feedback=feedback)
-       
-        # assuming correct
-        #return redirect('account')
+        conn = sqlite3.connect('bankdata.db')
+        cur = conn.cursor()
+        result = cur.execute('select password, salt from Users where username=?', username)
+        if result.rowcount == 0:
+            # invalid username
+            feedback = f"Username or Password is invalid"
+            return render_template('home.html',feedback=feedback)
+        else:
+            #valid username. check password hash is correct here
+            # if password hash correct, return account page
+            resultList = result.fetchall()
+            stored_password_hash = resultList[0][0]
+            stored_salt = resultList[0][1]
+            client_password_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), stored_salt, 100000)
+            if (client_password_hash == stored_password_hash):
+                # password success         
+                #return redirect('account')
+                pass
+            else:
+                # password fail
+                feedback = f"Username or Password is invalid"
+                return render_template('home.html',feedback=feedback)
+            
 
-    return render_template('home.html')
+    #return render_template('home.html')
 
 @app.route('/register')
 def register():
