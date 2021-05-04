@@ -1,16 +1,16 @@
 import sqlite3
-from flask import Flask, render_template, request, redirect, url_for
-
+from flask import Flask, render_template, request, redirect, url_for, session
 from util import create_salt, hash_password, validate_str
+
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'bQ9J84inbtoUcjLZFbQTVg'
 
 @app.route('/', methods=["GET","POST"])
 def home():
     app.logger.debug("Home page accessed")
     if request.method == "POST":
         app.logger.debug("Home page accessed with POST")
-       
-       
+           
         username = request.form.get("username")
         password = request.form.get("password")
 
@@ -38,8 +38,9 @@ def home():
             stored_salt = result[2]
             client_password_hash = hash_password(password, stored_salt)
             if (client_password_hash == stored_password_hash):
-                # password success         
-                return redirect(url_for('account',userid=userid))
+                # password success
+                session["USER"] = userid       
+                return redirect(url_for('account'))
             else:
                 # password fail
                 app.logger.error("On Login: hash details invalid for username = {}".format(username))
@@ -48,27 +49,39 @@ def home():
                                         
     return render_template('home.html')
 
+@app.route('/logout')
+def logout():
+    app.logger.debug("Logging out")
+    session.pop("USER",None)
+    return redirect(url_for('home'))
+
 @app.route('/register')
 def register():
     app.logger.debug("New Registration")
     return render_template('register.html')    
 
-@app.route('/account/<userid>')
-def account(userid):
-    #userid will be encoded needs to be decoded first
-    app.logger.debug("Account access by {}".format(userid))
-    conn = sqlite3.connect('bankdata.db')
-    cur = conn.cursor()    
-    name = cur.execute("select name from Users where userid= ? ",[userid]).fetchone()
-    balance = cur.execute("select currentBalance from Accounts where userid=? ",[userid]).fetchone()
-    conn.close()
+@app.route('/account')
+def account():
+    if session.get("USER", None) is not None:
+        userid = session.get("USER")
 
-    if(name == None or balance == None):
-        app.logger.error("Account query had empty result for {}".format(userid))
-        feedback = f"Something went wrong please login again"
-        return render_template('home.html',feedback = feedback)
-    
-    return render_template('account.html', name = name[0], balance = balance[0])   
+        app.logger.debug("Account access by {}".format(userid))
+        conn = sqlite3.connect('bankdata.db')
+        cur = conn.cursor()    
+        name = cur.execute("select name from Users where userId= ? ",[userid]).fetchone()
+        balance = cur.execute("select currentBalance from Accounts where userid=? ",[userid]).fetchone()
+        conn.close()
+
+        if(name == None or balance == None):
+            app.logger.error("Account query had empty result for {}".format(userid))
+            feedback = f"Something went wrong please login again"
+            return render_template('home.html',feedback = feedback)
+        
+        return render_template('account.html', name = name[0], balance = balance[0])
+    else:
+        app.logger.error("Session not set when accessing account")
+        return redirect(url_for('home'))   
+
 
 
 def create_db():
