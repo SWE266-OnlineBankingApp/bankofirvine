@@ -1,6 +1,4 @@
 import sqlite3
-import hashlib
-import os
 from flask import Flask, render_template, request, redirect
 from flask import Flask, render_template, request, redirect, url_for
 
