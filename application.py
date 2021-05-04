@@ -4,6 +4,7 @@ import os
 from flask import Flask, render_template, request, redirect
 from flask import Flask, render_template, request, redirect, url_for
 
+from util import create_salt, hash_password
 app = Flask(__name__)
 
 @app.route('/', methods=["GET","POST"])
@@ -90,9 +91,9 @@ def create_db():
     cur.execute("CREATE TABLE IF NOT EXISTS Users(userId INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT, salt TEXT, name TEXT)")
     cur.execute("CREATE TABLE IF NOT EXISTS Accounts(accountId INTEGER PRIMARY KEY AUTOINCREMENT, currentBalance REAL, userId INTEGER, FOREIGN KEY(userId) REFERENCES Users(userId))")
     #insert a new user with auto-assigned userId=1
-    salt1 = os.urandom(32)
     password1 = '012345'
-    password_hash = hashlib.pbkdf2_hmac('sha256', password1.encode('utf-8'), salt1, 100000)
+    salt1 = create_salt()
+    password_hash = hash_password(password1,salt1)
     cur.execute('INSERT INTO Users(username, password, salt, name) VALUES(?, ?, ?, ?)', ( 'testuser', password_hash, salt1, 'testname'))
     # insert an account for user with accountId = 1 auto-assigned and userId=1
     cur.execute('INSERT INTO Accounts(currentBalance, userId) VALUES(?, ?)', (5000, 1))
@@ -101,8 +102,6 @@ def create_db():
     cur.close()
     app.logger.debug("DB Created")
 
-def hash_password(password, salt):
-    return hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
 # run the app.
 if __name__ == "__main__":
     app.debug = True
