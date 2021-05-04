@@ -1,10 +1,7 @@
 import sqlite3
-import hashlib
-import os
-from flask import Flask, render_template, request, redirect
 from flask import Flask, render_template, request, redirect, url_for
 
-from util import create_salt, hash_password
+from util import create_salt, hash_password, validate_str
 app = Flask(__name__)
 
 @app.route('/', methods=["GET","POST"])
@@ -12,9 +9,17 @@ def home():
     app.logger.debug("Home page accessed")
     if request.method == "POST":
         app.logger.debug("Home page accessed with POST")
+       
+       
         username = request.form.get("username")
         password = request.form.get("password")
-        print(username, password)
+
+        #validate the username
+        if(not validate_str(username)):
+            app.logger.error("username = {} failed validation".format(username))
+            feedback = f"Username or Password is invalid"
+            return render_template('home.html',feedback=feedback)
+
         #code to check against DB 
         conn = sqlite3.connect('bankdata.db')
         cur = conn.cursor()
@@ -22,6 +27,7 @@ def home():
         conn.close()
         if (not result):
             # invalid username
+            app.logger.error("On Login: details not found for username = {}".format(username))
             feedback = f"Username or Password is invalid"
             return render_template('home.html',feedback=feedback)
         else:
@@ -36,26 +42,10 @@ def home():
                 return redirect(url_for('account',userid=userid))
             else:
                 # password fail
-                # We should not store user's bare password in the logs. Can store only username if wanted
-                app.logger.error("On Login details not found for username = {}, password= {}".format(username, password))
+                app.logger.error("On Login: hash details invalid for username = {}".format(username))
                 feedback = f"Username or Password is invalid"
                 return render_template('home.html',feedback=feedback)
-                     
-        # validate entered username and password strings 
-
-        #code to check against DB
-        #conn = sqlite3.connect('bankdata.db')
-        #cur = conn.cursor()   
-        #userid = cur.execute("select userId from Users where username= ? and password = ? ",(username, password)).fetchone()  
-        #conn.close()
-   
-        # if(not userid):
-        #     app.logger.error("On Login details not found for username = {}, password= {}".format(username, password))
-        #     feedback = f"Username or Password is invalid"
-        #     return render_template('home.html',feedback=feedback)
-        # else:        
-        #     return redirect(url_for('account',userid=userid[0]))
-                   
+                                        
     return render_template('home.html')
 
 @app.route('/register')
