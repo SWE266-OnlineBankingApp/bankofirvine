@@ -12,7 +12,7 @@
 			</div>
 			<div class="col-6">
 				<div class="suport text-right">
-					<button class="btn-sm btn-outline-info" onclick="Logout()">LOGOUT</button>						
+					<button class="btn-sm btn-outline-info">LOGOUT</button>						
 				</div>
 			</div>
 		</div>
@@ -28,11 +28,11 @@
 						<p style="font-weight: bold;margin-top: 1rem;font-size: 1.5rem" class="text-info">ACCOUNT DETAILS</p>
 						<div class="info_acount">
 							<p style="float: left;font-size: 1rem;font-weight: bold;">Account Holder</p>
-							<p style="float: right;font-size: 1rem;font-weight: bold;">Name</p>
+							<p style="float: right;font-size: 1rem;font-weight: bold;">{{ name }}</p>
 						</div>
                         <div class="info_acount" style="clear: left;">
 							<p style="float: left;font-size: 1rem;font-weight: bold;">Balance</p>
-							<p style="float: right;font-size: 1rem;font-weight: bold;">$30</p>
+							<p style="float: right;font-size: 1rem;font-weight: bold;">${{ balance }}</p>
 						</div>					
                         
                         <!--Div below is empty used only to make elements look good on the page-->
