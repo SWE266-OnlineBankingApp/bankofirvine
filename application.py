@@ -55,10 +55,31 @@ def logout():
     session.pop("USER",None)
     return redirect(url_for('home'))
 
-@app.route('/register')
+@app.route('/register', methods=["GET","POST"])
 def register():
-    app.logger.debug("New Registration")
-    return render_template('register.html')    
+    if (request.method== "POST"):
+        app.logger.debug("New Registration started")
+        username = request.form.get("uname")
+        password = request.form.get("pass")
+        initial_balance = request.form.get("ibalance", type= float)
+        name = request.form.get("name")
+        salt = create_salt()
+        password_hash = hash_password(password, salt)
+        create_user(username, password_hash, salt, name)
+        userid = get_userid_from_username(username)
+        app.logger.debug("username={}, password_hash={}, initial_balance={}, name={}".format(username, password_hash, initial_balance, name))
+        app.logger.debug("created userid = {}".format(userid))
+        if (userid):
+            create_account(initial_balance, userid)
+            app.logger.debug("New Registration completed")
+            feedback = f"Successful registration."
+            return render_template('home.html',feedback=feedback)
+        else:
+            app.logger.error("Couldn't locate userid of username= {}".format(username))
+            feedback = f"Couldn't register user. Please contact the administrator"
+            return render_template('home.html',feedback=feedback)
+    else:
+        return render_template('register.html')    
 
 @app.route('/account')
 def account():
@@ -82,7 +103,24 @@ def account():
         app.logger.error("Session not set when accessing account")
         return redirect(url_for('home'))   
 
+def create_user(username, password_hash, salt, name):
+    conn = sqlite3.connect('bankdata.db')
+    cur = conn.cursor()
+    cur.execute("INSERT INTO Users(username, password, salt, name) VALUES(?, ?, ?, ?)", (username, password_hash, salt, name))
+    conn.commit()
+    cur.close()
 
+def get_userid_from_username(username):
+    conn = sqlite3.connect('bankdata.db')
+    cur = conn.cursor()
+    return cur.execute("SELECT userid from Users where username = ?", (username,)).fetchone()
+
+def create_account(initial_balance, userid):
+    conn = sqlite3.connect('bankdata.db')
+    cur = conn.cursor()
+    cur.execute("INSERT INTO Accounts(currentBalance, userId) VALUES(?, ?)", (initial_balance, userid))
+    conn.commit()
+    cur.close()
 
 def create_db():
     app.logger.debug("Initiate DB creation")
