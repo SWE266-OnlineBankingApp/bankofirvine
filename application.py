@@ -29,7 +29,7 @@ def home():
             userid = result[0]
             stored_password_hash = result[1]
             stored_salt = result[2]
-            client_password_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), stored_salt, 100000)
+            client_password_hash = hash_password(password, stored_salt)
             if (client_password_hash == stored_password_hash):
                 # password success         
                 return redirect(url_for('account',userid=userid))
@@ -100,6 +100,9 @@ def create_db():
     conn.commit()
     cur.close()
     app.logger.debug("DB Created")
+
+def hash_password(password, salt):
+    return hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
 # run the app.
 if __name__ == "__main__":
     app.debug = True
