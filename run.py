@@ -59,14 +59,15 @@ def logout():
 def register():
     if (request.method== "POST"):
         app.logger.debug("New Registration started")
-        username = request.form.get("uname")
-        password = request.form.get("pass")
+        username = request.form.get("username")
+        password = request.form.get("password")
         initial_balance = request.form.get("ibalance", type= float)
         name = request.form.get("name")
         salt = create_salt()
         password_hash = hash_password(password, salt)
         try:
             create_user(username, password_hash, salt, name)
+            app.logger.debug("username={}, password_hash={}, initial_balance={}, name={}".format(username, password_hash, initial_balance, name))
         except sqlite3.IntegrityError as e:
             # uniqu constraint failed. send user back to login page with user already exists
             feedback = "User already exists."
@@ -74,7 +75,6 @@ def register():
         else:
             # user created. get userid for account creation
             userid = get_userid_from_username(username)
-            app.logger.debug("username={}, password_hash={}, initial_balance={}, name={}".format(username, password_hash, initial_balance, name))
             app.logger.debug("created userid = {}".format(userid))
             # userid should always be present since we just successfully created a user. nonetheless let's check if a userid was returned by the DB
             if (userid):
