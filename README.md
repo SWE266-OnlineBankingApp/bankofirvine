@@ -22,13 +22,13 @@ python3 -m pip install -r requirements.txt
 Run bankofirvine in production enviroment 
 For Mac
 ```
-export FLASK_APP=application
+export FLASK_APP=run
 flask run
 ```
 
 For Windows
 ```
-set FLASK_APP=application
+set FLASK_APP=run
 flask run
 ```
 View bankofirvine app at: http://localhost:5000

@@ -1,8 +1,8 @@
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, session
-from util import create_salt, hash_password, validate_str
+from application.functions.util import create_salt, hash_password, validate_str
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='./application/templates')
 app.config['SECRET_KEY'] = 'bQ9J84inbtoUcjLZFbQTVg'
 
 @app.route('/', methods=["GET","POST"])
