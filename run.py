@@ -63,6 +63,8 @@ def register():
         password = request.form.get("password")
         initial_balance = request.form.get("ibalance", type= float)
         name = request.form.get("name")
+        
+        
         salt = create_salt()
         password_hash = hash_password(password, salt)
         try:
@@ -80,11 +82,11 @@ def register():
             if (userid):
                 create_account(initial_balance, userid)
                 app.logger.debug("New Registration completed")
-                feedback = f"Successful registration."
+                feedback = f"Successful registration. Please login"
                 return render_template('home.html',feedback=feedback)
             else:
                 app.logger.error("Couldn't locate userid of username= {}".format(username))
-                feedback = f"Couldn't register user. Please contact the administrator"
+                feedback = f"Couldn't register. Please contact the administrator"
                 return render_template('home.html',feedback=feedback)
     else:
         return render_template('register.html') 
