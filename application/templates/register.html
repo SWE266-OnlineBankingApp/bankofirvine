@@ -4,58 +4,46 @@
 
 {% block main %}
 
-<div class="container bg-info" id="accountregister">
-  <div class="col-sm  bg-white" style="border-right: 3px solid #007bff; ">
-    <p class="text-info mt-4 ml-3" style="font-weight: bold;font-size: 1.3rem;">ACCOUNT REGISTRATION</p>
-
-    <div class="form-group">
-      <label class="text-dark">Name</label>
-      <input type="text" name="name" id="name" class="form-control" placeholder="Name">
-    </div>
-    <div class="form-group">
-      <label class="text-dark">Username</label>
-      <input type="text" name="name" id="uname" class="form-control" placeholder="Name">
-    </div>
-    <div class="form-group">
-      <label class="text-dark">Password</label>
-      <input type="password" name="pass" id="pass" class="form-control" placeholder="Password">
-    </div>
-    <div class="form-group">
-      <label class="text-dark">Confirm password</label>
-      <input type="password" name="cpass" id="cpass" class="form-control" placeholder="Confirm password">
-    </div>
-    <div class="form-group">
-      <label class="text-dark">Initial balance</label>
-      <input type="text" name="ibalance" id="ibalance" class="form-control" placeholder="Initial balance">
-    </div>
-
-    <button onclick="Register()" id="register" type="submit" class="btn btn-info btn-block mt-1 mb-5 "
-      style="width: 80px;margin:0 auto;">Submit</button>
-  </div>
-</div>
-
-<div class="container pt-4" id="manageaccount" style="display: none">
+<div class="container bg-info p-4" id="accountregister">
   <div class="row">
-    <div class="col-3">
-      <div class="back text-center">
-        <p>BACK TO HOME</p>
-      </div>
-    </div>
-    <div class="col-6">
-      <div class="logo">
-        <p>SMART BANKING</p>
-      </div>
-    </div>
-    <div class="col-3">
-      <div class="suport text-center">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8  bg-white" style="border-right: 2px solid #007bff; ">
+      <p class="text-info mt-3 ml-3" style="font-weight: bold;font-size: 1.5rem; text-align: center;">ACCOUNT
+        REGISTRATION</p>
+        {% if feedback %}
+        <p class="text-danger">{{ feedback }}</p>
+        {% endif %}
+      <form action="/" method="POST" class="col-12 pb-3 " id="formregister">
+        <div class="form-group">
+          <label class="text-dark">Name</label>
+          <input type="text" name="name" id="name" class="form-control" placeholder="Enter your name" maxlength="127" required>
+        </div>
+        <div class="form-group">
+          <label class="text-dark">Username</label>
+          <input type="text" name="username" id="uname" class="form-control" placeholder="Enter your username" maxlength="127"
+            required>
+        </div>
+        <div class="form-group">
+          <label class="text-dark">Password</label>
+          <input type="password" name="password" id="password" class="form-control" placeholder="Enter password"
+            maxlength="127" required>
+        </div>
+        <div class="form-group">
+          <label class="text-dark">Confirm password</label>
+          <input type="password" name="cpassword" id="cpassword" class="form-control" placeholder="Re-enter password"
+            maxlength="127" required>
+        </div>
+        <div class="form-group">
+          <label class="text-dark">Opening Balance</label>
+          <input type="text" name="ibalance" id="ibalance" class="form-control" placeholder="Enter initial balance"
+            maxlength="127" required>
+        </div>
 
-        <button class="btn btn-outline-primary" onclick="Logout()">LOGOUT</button>
-
-      </div>
+        <button id="register" type="submit" class="btn btn-info btn-block mt-3 mb-5 "
+          style="width: 80px;margin:0 auto;">Submit</button>
+      </form>
     </div>
   </div>
 </div>
-
-<!-- copy ends-->
 
 {% endblock %}
