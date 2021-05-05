@@ -65,21 +65,29 @@ def register():
         name = request.form.get("name")
         salt = create_salt()
         password_hash = hash_password(password, salt)
-        create_user(username, password_hash, salt, name)
-        userid = get_userid_from_username(username)
-        app.logger.debug("username={}, password_hash={}, initial_balance={}, name={}".format(username, password_hash, initial_balance, name))
-        app.logger.debug("created userid = {}".format(userid))
-        if (userid):
-            create_account(initial_balance, userid)
-            app.logger.debug("New Registration completed")
-            feedback = f"Successful registration."
+        try:
+            create_user(username, password_hash, salt, name)
+        except sqlite3.IntegrityError as e:
+            # uniqu constraint failed. send user back to login page with user already exists
+            feedback = "User already exists."
             return render_template('home.html',feedback=feedback)
         else:
-            app.logger.error("Couldn't locate userid of username= {}".format(username))
-            feedback = f"Couldn't register user. Please contact the administrator"
-            return render_template('home.html',feedback=feedback)
+            # user created. get userid for account creation
+            userid = get_userid_from_username(username)
+            app.logger.debug("username={}, password_hash={}, initial_balance={}, name={}".format(username, password_hash, initial_balance, name))
+            app.logger.debug("created userid = {}".format(userid))
+            # userid should always be present since we just successfully created a user. nonetheless let's check if a userid was returned by the DB
+            if (userid):
+                create_account(initial_balance, userid)
+                app.logger.debug("New Registration completed")
+                feedback = f"Successful registration."
+                return render_template('home.html',feedback=feedback)
+            else:
+                app.logger.error("Couldn't locate userid of username= {}".format(username))
+                feedback = f"Couldn't register user. Please contact the administrator"
+                return render_template('home.html',feedback=feedback)
     else:
-        return render_template('register.html')    
+        return render_template('register.html') 
 
 @app.route('/account')
 def account():
@@ -106,14 +114,22 @@ def account():
 def create_user(username, password_hash, salt, name):
     conn = sqlite3.connect('bankdata.db')
     cur = conn.cursor()
-    cur.execute("INSERT INTO Users(username, password, salt, name) VALUES(?, ?, ?, ?)", (username, password_hash, salt, name))
-    conn.commit()
-    cur.close()
+    try:
+        cur.execute("INSERT INTO Users(username, password, salt, name) VALUES(?, ?, ?, ?)", (username, password_hash, salt, name))
+    except sqlite3.IntegrityError as e:
+        raise sqlite3.IntegrityError
+    finally:
+        conn.commit()
+        cur.close()
 
 def get_userid_from_username(username):
     conn = sqlite3.connect('bankdata.db')
     cur = conn.cursor()
-    return cur.execute("SELECT userid from Users where username = ?", (username,)).fetchone()
+    userid = cur.execute("SELECT userid from Users where username = ?", (username,)).fetchone()[0]
+    conn.commit()
+    cur.close()
+    return userid
+
 
 def create_account(initial_balance, userid):
     conn = sqlite3.connect('bankdata.db')
