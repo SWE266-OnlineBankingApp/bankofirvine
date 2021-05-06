@@ -53,7 +53,7 @@
         					<div class="input-group-prepend">
           						<div class="input-group-text">$</div>
         					</div>
-        						<input type="number" name="balance" id="Depositinput" value="" class="form-control" id="inlineFormInputGroup" placeholder="Enter amount to Deposit">
+        						<input type="number" name="deposit" id="Depositinput" value="" class="form-control" id="inlineFormInputGroup" min="1" placeholder="Enter amount to Deposit">
       					</div>     				
       						<button type="button" class="btn btn-info float-right" data-toggle="modal" data-target=".bd-example-modal-sm" onclick="Deposit()">Deposit</button>
 					</div>
@@ -64,7 +64,7 @@
         					<div class="input-group-prepend">
           						<div class="input-group-text">$</div>
         					</div>
-        					<input type="number" name="balance" id="Withdrawalinput" value="" class="form-control" id="inlineFormInputGroup" placeholder="Enter amount to Withdraw" >
+        					<input type="number" name="withdraw" id="Withdrawalinput" value="" class="form-control" id="inlineFormInputGroup" min="1" placeholder="Enter amount to Withdraw" >
       					</div>
       					<button type="button" class="btn btn-info float-right" data-toggle="modal" data-target=".bd-example-modal-sm" onclick="Withdrawal()">Withdraw</button>
 					</div>
