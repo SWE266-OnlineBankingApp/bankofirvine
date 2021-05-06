@@ -52,8 +52,11 @@ def home():
 
 @app.route('/about')
 def about():
-    app.logger.debug("About")
-    return render_template('about.html')
+    if session.get("USER", None) is not None:
+        app.logger.debug("About")
+        return render_template('about.html')
+        
+    return render_template('home.html')    
 
 @app.route('/logout')
 def logout():
