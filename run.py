@@ -50,6 +50,11 @@ def home():
                                         
     return render_template('home.html')
 
+@app.route('/about')
+def about():
+    app.logger.debug("About")
+    return render_template('about.html')
+
 @app.route('/logout')
 def logout():
     app.logger.debug("Logging out")
