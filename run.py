@@ -18,8 +18,8 @@ def home():
         #validate the username
         if(not validate_str(username)):
             app.logger.error("username = {} failed validation".format(username))
-            feedback = f"Username or Password is invalid"
-            return render_template('home.html',feedback=feedback)
+            nfeedback = f"Username or Password is invalid"
+            return render_template('home.html',feedback=nfeedback)
 
         #code to check against DB 
         conn = sqlite3.connect('bankdata.db')
@@ -29,8 +29,8 @@ def home():
         if (not result):
             # invalid username
             app.logger.error("On Login: details not found for username = {}".format(username))
-            feedback = f"Username or Password is invalid"
-            return render_template('home.html',feedback=feedback)
+            nfeedback = f"Username or Password is invalid"
+            return render_template('home.html',nfeedback=nfeedback)
         else:
             #valid username. check password hash is correct here
             # if password hash correct, return account page
@@ -45,8 +45,8 @@ def home():
             else:
                 # password fail
                 app.logger.error("On Login: hash details invalid for username = {}".format(username))
-                feedback = f"Username or Password is invalid"
-                return render_template('home.html',feedback=feedback)
+                nfeedback = f"Username or Password is invalid"
+                return render_template('home.html',nfeedback=nfeedback)
                                         
     return render_template('home.html')
 
@@ -70,11 +70,11 @@ def register():
         password_hash = hash_password(password, salt)
         try:
             create_user(userid, username, password_hash, salt, name)
-            app.logger.debug("Created user with userId = {}, username={}, password_hash={}, initial_balance={}, name={}".format(userid, username, password_hash, initial_balance, name))
+            app.logger.debug("Created new user")
         except sqlite3.IntegrityError as e:
             # uniqu constraint failed. send user back to login page with user already exists
-            feedback = "User already exists."
-            return render_template('home.html',feedback=feedback)
+            nfeedback = "User already exists."
+            return render_template('home.html',nfeedback=nfeedback)
         else:
             # # user created. get userid for account creation
             # userid = get_userid_from_username(username)
@@ -83,8 +83,8 @@ def register():
             # if (userid):
             create_account(initial_balance, userid)
             app.logger.debug("New Registration completed")
-            feedback = f"Successful registration. Please login"
-            return render_template('home.html',feedback=feedback)
+            pfeedback = f"Successful registration. Please login"
+            return render_template('home.html',pfeedback=pfeedback)
             # else:
             #     app.logger.error("Couldn't locate userid of username= {}".format(username))
             #     feedback = f"Couldn't register. Please contact the administrator"
@@ -97,7 +97,7 @@ def account():
     if session.get("USER", None) is not None:
         userid = session.get("USER")
 
-        app.logger.debug("Account access by {}".format(userid))
+        app.logger.debug("Account access")
         conn = sqlite3.connect('bankdata.db')
         cur = conn.cursor()
         name = cur.execute("select name from Users where userId= ? ",[userid]).fetchone()
@@ -105,9 +105,9 @@ def account():
         conn.close()
 
         if(name == None or balance == None):
-            app.logger.error("Account query had empty result for {}".format(userid))
-            feedback = f"Something went wrong please login again"
-            return render_template('home.html',feedback = feedback)
+            app.logger.error("Account query had empty result")
+            nfeedback = f"Something went wrong please login again"
+            return render_template('home.html',nfeedback = nfeedback)
         
         return render_template('account.html', name = name[0], balance = balance[0])
     else:
@@ -153,13 +153,13 @@ def create_db():
     cur.execute("PRAGMA foreign_keys = ON")
     cur.execute("CREATE TABLE IF NOT EXISTS Users(userId TEXT PRIMARY KEY, username TEXT UNIQUE, password TEXT, salt TEXT, name TEXT)")
     cur.execute("CREATE TABLE IF NOT EXISTS Accounts(accountId INTEGER PRIMARY KEY AUTOINCREMENT, currentBalance REAL, userId TEXT, FOREIGN KEY(userId) REFERENCES Users(userId))")
-    #insert a new user with auto-assigned userId=1
+    #insert an initial new user 
     userid = create_random_userid()
     password1 = '012345'
     salt1 = create_salt()
     password_hash = hash_password(password1,salt1)
     cur.execute('INSERT INTO Users(userId, username, password, salt, name) VALUES(?, ?, ?, ?, ?)', (userid, 'testuser', password_hash, salt1, 'testname'))
-    # insert an account for user with accountId = 1 auto-assigned and userId=1
+    # insert an account for intial user
     cur.execute('INSERT INTO Accounts(currentBalance, userId) VALUES(?, ?)', (5000, userid))
 
     conn.commit()

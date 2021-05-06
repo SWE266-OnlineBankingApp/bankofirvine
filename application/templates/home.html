@@ -27,8 +27,11 @@
 				</div>
 				<button id="signin" type="submit" class="btn btn-info btn-block mt-1 mb-5 "
 					style="width: 80%;margin:0 auto;">Submit</button>
-				{% if feedback %}
-				<p class="text-danger">{{ feedback }}</p>
+				{% if nfeedback %}
+				<p class="text-danger">{{ nfeedback }}</p>
+				{% endif %}
+				{% if pfeedback %}
+				<p class="text-success">{{ pfeedback }}</p>
 				{% endif %}
 			</form>
 
