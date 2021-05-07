@@ -10,18 +10,19 @@
     <div class="col-sm-8  bg-white" style="border-right: 2px solid #007bff; ">
       <p class="text-info mt-3 ml-3" style="font-weight: bold;font-size: 1.5rem; text-align: center;">ACCOUNT
         REGISTRATION</p>
-        {% if feedback %}
-        <p class="text-danger">{{ feedback }}</p>
-        {% endif %}
+      {% if feedback %}
+      <p class="text-danger">{{ feedback }}</p>
+      {% endif %}
       <form action="/register" method="POST" class="col-12 pb-3 " id="formregister">
         <div class="form-group">
           <label class="text-dark">Name</label>
-          <input type="text" name="name" id="name" class="form-control" placeholder="Enter your name" maxlength="127" required>
+          <input type="text" name="name" id="name" class="form-control" placeholder="Enter your name" maxlength="127"
+            required>
         </div>
         <div class="form-group">
           <label class="text-dark">Username</label>
-          <input type="text" name="username" id="uname" class="form-control" placeholder="Enter your username" maxlength="127"
-            required>
+          <input type="text" name="username" id="uname" class="form-control" placeholder="Enter your username"
+            maxlength="127" required>
         </div>
         <div class="form-group">
           <label class="text-dark">Password</label>
@@ -35,12 +36,16 @@
         </div>
         <div class="form-group">
           <label class="text-dark">Opening Balance</label>
-          <input type="number" name="ibalance" id="ibalance" class="form-control" min="1" placeholder="Enter initial balance"
-            maxlength="127" required>
+          <input type="number" name="ibalance" id="ibalance" class="form-control" min="1"
+            placeholder="Enter initial balance" maxlength="127" required>
+        </div>
+        <div class="btn-group" style="text-align: center;">
+          <a href="{{ url_for('home') }}" class="btn btn-info mt-3" role="button"
+            style="width: 80px; height: 38px; margin-left: 15rem; ">Cancel </a>
+          <button id="register" type="submit" class="btn btn-info btn-block mt-3 mb-5 "
+            style="width: 80px;margin-left:1rem; ">Submit</button>
         </div>
 
-        <button id="register" type="submit" class="btn btn-info btn-block mt-3 mb-5 "
-          style="width: 80px;margin:0 auto;">Submit</button>
       </form>
     </div>
   </div>
