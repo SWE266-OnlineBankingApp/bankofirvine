@@ -1,8 +1,9 @@
-""" input validation helper functions of bankofirvine 
+""" helper functions of bankofirvine 
 """
 import re
 import os
 import hashlib
+import uuid
 
 # Numeric validation (e.g. balance)
 def validate_num (num_input):
@@ -17,6 +18,9 @@ def create_salt():
 
 def hash_password(password, salt):
     return hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+
+def create_random_userid():
+    return str(uuid.uuid4())    
 
 # if __name__ == "__main__":
 #     print("test1", validate_num ("0"))
