@@ -1,8 +1,11 @@
 import sqlite3
 from application import app
 from flask import render_template, request, redirect, url_for, session
-from application.functions.util import create_salt, hash_password, validate_str, create_random_userid
-from application.functions.data_access import create_user, create_account
+from application.functions.util import create_salt, hash_password, validate_str, create_random_userid, comments
+from application.functions.data_access import create_user, create_account, get_name_from_userid
+
+
+
 
 @app.route('/', methods=["GET","POST"])
 def home():
@@ -38,21 +41,27 @@ def home():
             client_password_hash = hash_password(password, stored_salt)
             if (client_password_hash == stored_password_hash):
                 # password success
-                session["USER"] = userid       
+                session["USER"] = userid      
                 return redirect(url_for('account'))
             else:
                 # password fail
                 app.logger.error("On Login: password invalid for username = {}".format(username))
                 nfeedback = f"Username or Password is invalid"
                 return render_template('home.html',nfeedback=nfeedback)
-                                        
+    
+    session.pop("USER",None)                                    
     return render_template('home.html')
 
-@app.route('/about')
+@app.route('/about', methods=["GET","POST"])
 def about():
     if session.get("USER", None) is not None:
         app.logger.debug("About")
-        return render_template('about.html')
+
+        if(request.method=="POST"):
+            comment = request.form.get("comment")
+            name = get_name_from_userid(session.get("USER"))
+            comments[name[0]]=comment
+        return render_template('about.html', comments = comments)
 
     return render_template('home.html')    
 
@@ -113,6 +122,7 @@ def account():
         if(name == None or balance == None):
             app.logger.error("Account query had empty result")
             nfeedback = f"Something went wrong please login again"
+            session.pop("USER",None)
             return render_template('home.html',nfeedback = nfeedback)
         
         return render_template('account.html', name = name[0], balance = balance[0])

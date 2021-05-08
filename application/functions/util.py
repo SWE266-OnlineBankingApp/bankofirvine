@@ -5,6 +5,12 @@ import os
 import hashlib
 import uuid
 
+comments = {
+            "Fred" : "Great service! I'm banking here forever.",
+            "Barney" : "Wilma was super helpful in setting up my account.",
+            "Betty" : "Had to a wait a bit, but wonderful service when they got to me."
+        }
+
 # Numeric validation (e.g. balance)
 def validate_num (num_input):
     return re.match("((^[1-9][0-9]*)|(^0))(\.[0-9]{2})$", num_input) != None

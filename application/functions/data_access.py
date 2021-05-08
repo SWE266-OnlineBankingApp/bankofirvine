@@ -22,6 +22,13 @@ def get_userid_from_username(username):
     cur.close()
     return userid
 
+def get_name_from_userid(userid):
+    conn = sqlite3.connect('bankdata.db')
+    cur = conn.cursor()
+    name = cur.execute("SELECT name from Users WHERE userId = ?", (userid,)).fetchone()
+    cur.close()
+    conn.commit()
+    return name
 
 def create_account(initial_balance, userid):
     conn = sqlite3.connect('bankdata.db')
