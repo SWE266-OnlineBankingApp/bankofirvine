@@ -47,6 +47,14 @@
 			<div class="col-sm-12 col-md-6 p-2  mt-4" id="content2">
 				<div class="payment p-3 shadow-sm p-3 mb-4 bg-white rounded">					
 					<p style="font-weight: bold;margin-top: 1rem;font-size: 1.5rem" class="text-info">PAYMENT</p>
+					{% with messages = get_flashed_messages() %}
+						{% if messages %}
+							{% for message in messages %}
+								<p style="color:red;">{{message}}</p>
+							{% endfor %}
+						{% endif %}
+					{% endwith %}
+					<!-- <form action="/account" method="POST"> -->
 					<div class="addmoney">
 						<form action="/account" method="POST">
 							<p style="margin-bottom: 0.5rem;">Deposit</p>
@@ -55,31 +63,25 @@
 									<div class="input-group-text">$</div>
 								</div>
 								<input type="number" step='0.01' name="deposit" id="Depositinput" value="" class="form-control" id="inlineFormInputGroup" min="1" placeholder="Enter amount to Deposit">
-								{% with messages = get_flashed_messages() %}
-									{% if messages %}
-										{% for message in messages %}
-											<p style="color:red;">{{message}}</p>
-										{% endfor %}
-									{% endif %}
-								{% endwith %}
 							</div>
-								<button type="submit" class="btn btn-info float-right">Deposit</button>     				
+							<button type="submit" name="deposit" class="btn btn-info float-right">Deposit</button>     				
 								<!-- <button type="button" class="btn btn-info float-right" data-toggle="modal" data-target=".bd-example-modal-sm" onclick="deposit()">Deposit</button> -->
 						</form>
 					</div>
 
-
 					<div class="addmoney">
-						<p style="margin-bottom: 0.5rem;clear: left;">Withdraw</p>
-						<div class="input-group mb-2 float-left" style="width: 75%;">
-        					<div class="input-group-prepend">
-          						<div class="input-group-text">$</div>
-        					</div>
-        					<input type="number" name="withdraw" id="Withdrawalinput" value="" class="form-control" id="inlineFormInputGroup" min="1" placeholder="Enter amount to Withdraw" >
-      					</div>
-      					<button type="button" class="btn btn-info float-right" data-toggle="modal" data-target=".bd-example-modal-sm" onclick="withdraw()">Withdraw</button>
+						<form action="/account" method="POST">
+							<p style="margin-bottom: 0.5rem;clear: left;">Withdraw</p>
+							<div class="input-group mb-2 float-left" style="width: 75%;">
+								<div class="input-group-prepend">
+									<div class="input-group-text">$</div>
+								</div>
+								<input type="number" step='0.01' name="withdraw" id="Withdrawalinput" value="" class="form-control" id="inlineFormInputGroup" min="1" placeholder="Enter amount to Withdraw" >
+							</div>
+							<button type="submit" name="withdraw" class="btn btn-info float-right">Withdraw</button>   
+						</form>
 					</div>
-
+				<!-- </form> -->
 				<div class="exmoney mt-2">
 					<p class="mt-3 " style="margin-bottom: 0.5rem;clear: left;"></p>
 				</div>

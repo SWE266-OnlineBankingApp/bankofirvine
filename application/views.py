@@ -148,18 +148,42 @@ def deposit():
             # does name store in the cache anywhere???
             name = cur.execute("select name from Users where userId= ? ",[userid]).fetchone()
             app.logger.debug("Got name -> " + name[0])
-
-            balance = cur.execute("select currentBalance from Accounts where userId= ? ",[userid]).fetchone()
-            app.logger.debug("Current balance ->" + str(balance[0]) + "type of the balance -> " + balance[0].__class__.__name__)
-
-            app.logger.debug("New Deposit amount in float" + str(float(new_deposit) ))
-
             cur.execute("update Accounts set currentBalance = currentBalance + ? where userId= ? ", [float(new_deposit), userid])
-            new_balance = cur.execute("select currentBalance from Accounts where userId= ? ",[userid]).fetchone()
             conn.commit()
+            new_balance = cur.execute("select currentBalance from Accounts where userId= ? ",[userid]).fetchone()
             app.logger.debug("Got new balance -> " + str(new_balance[0]))
             conn.close()
             # update balance shown on the page
             flash("Deposit Completed")
             app.logger.debug("Deposit Completed")
             return render_template('account.html', name = name[0], balance = new_balance[0])
+
+    
+@app.route('/account', methods=["GET","POST"])
+def withdraw():
+    if (request.method == "POST"):
+        new_withdraw = request.form.get("withdraw")
+        app.logger.debug("We Have A New Withdrawal -> " + new_withdraw)
+        if (not validate_num(new_withdraw)):
+            # warning user the input format is invalid
+            flash("Invalid input. Please enter a whole number or a number with two digits")
+            return redirect(url_for('account'))  
+        else:
+            # check if there is enough amount in the database account
+            userid = session.get("USER")
+            conn = sqlite3.connect('bankdata.db')
+            cur = conn.cursor()
+            balance = cur.execute("select currentBalance from Accounts where userId= ? ",[userid]).fetchone()
+            if (balance >= float(new_withdraw)):
+                # update balance in the database account
+                name = cur.execute("select name from Users where userId= ? ",[userid]).fetchone()
+                cur.execute("update Accounts set currentBalance = currentBalance - ? where userId= ? ", [float(new_withdraw), userid])
+                conn.commit()
+                new_balance = cur.execute("select currentBalance from Accounts where userId= ? ",[userid]).fetchone()
+                conn.close()
+                # update balance shown on the page
+                flash("Withdrawal Completed")
+                return render_template('account.html', name = name[0], balance = new_balance[0])
+            else:
+                flash("Not Enough Balance")
+                return redirect(url_for('account'))  
