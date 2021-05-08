@@ -74,8 +74,23 @@ def register():
         app.logger.debug("New Registration started")
         username = request.form.get("username")
         password = request.form.get("password")
+        confirm_password = request.form.get("cpassword")
         initial_balance = request.form.get("ibalance", type= float)
         name = request.form.get("name")
+        
+        #validate user input. If invalid return error message to the user
+        if(not validate_str(username)):
+            nfeedback = "Username is not valid. Please select another username"
+            return render_template('register.html', feedback=nfeedback)
+        if (not validate_str(name)):
+            nfeedback = "Name is not valid. Please select another name. (JK! you probably made a typo)"
+            return render_template('register.html', feedback=nfeedback)
+        if (not validate_num(initial_balance)):
+            nfeedback = "Initial Balance is not valid. Please choose a valid initial balance."
+            return render_template('register.html', feedback=nfeedback)          
+        if (password != confirm_password):
+            nfeedback = "Password fields do not match. Please try again."
+            return render_template('register.html', feedback=nfeedback)
         
         userid = create_random_userid()
         salt = create_salt()
