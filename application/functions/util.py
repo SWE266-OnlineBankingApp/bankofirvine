@@ -13,7 +13,7 @@ comments = {
 
 # Numeric validation (e.g. balance)
 def validate_num (num_input):
-    return re.match("((^[1-9][0-9]*)|(^0))(\.[0-9]{2})$", num_input) != None
+    return re.match("^([1-9][0-9]*|0)(\.[0-9]{2}){0,1}$", num_input) != None
 
 # String validation (e.g. account name, password)
 def validate_str (str_input):
