@@ -1,7 +1,7 @@
 import sqlite3
 from application import app
-from flask import render_template, request, redirect, url_for, session
-from application.functions.util import create_salt, hash_password, validate_str, create_random_userid, comments
+from flask import render_template, request, redirect, url_for, session, flash
+from application.functions.util import create_salt, hash_password, validate_str, validate_num, create_random_userid, comments
 from application.functions.data_access import create_user, create_account, get_name_from_userid
 
 @app.route('/', methods=["GET","POST"])
@@ -108,8 +108,8 @@ def register():
 def account():
     if session.get("USER", None) is not None:
         userid = session.get("USER")
-
         app.logger.debug("Account access")
+        app.logger.debug("Here: " +userid)
         conn = sqlite3.connect('bankdata.db')
         cur = conn.cursor()
         name = cur.execute("select name from Users where userId= ? ",[userid]).fetchone()
@@ -126,3 +126,40 @@ def account():
     else:
         app.logger.error("Session not set when accessing account")
         return redirect(url_for('home'))   
+
+
+
+@app.route('/account', methods=["GET","POST"])
+def deposit():
+    if (request.method == "POST"):
+        new_deposit = request.form.get("deposit")
+        app.logger.debug("We Have A New Deposit -> " + new_deposit)
+        if (not validate_num(new_deposit)):
+            # warning user the input format is invalid
+            flash("Invalid input. Please enter a whole number or a number with two digits")
+            app.logger.debug("Invalid input")
+            return redirect(url_for('account'))  
+        else:
+            # update balance in the database account
+            app.logger.debug("Accessing db")
+            userid = session.get("USER")
+            conn = sqlite3.connect('bankdata.db')
+            cur = conn.cursor()
+            # does name store in the cache anywhere???
+            name = cur.execute("select name from Users where userId= ? ",[userid]).fetchone()
+            app.logger.debug("Got name -> " + name[0])
+
+            balance = cur.execute("select currentBalance from Accounts where userId= ? ",[userid]).fetchone()
+            app.logger.debug("Current balance ->" + str(balance[0]) + "type of the balance -> " + balance[0].__class__.__name__)
+
+            app.logger.debug("New Deposit amount in float" + str(float(new_deposit) ))
+
+            cur.execute("update Accounts set currentBalance = currentBalance + ? where userId= ? ", [float(new_deposit), userid])
+            new_balance = cur.execute("select currentBalance from Accounts where userId= ? ",[userid]).fetchone()
+            conn.commit()
+            app.logger.debug("Got new balance -> " + str(new_balance[0]))
+            conn.close()
+            # update balance shown on the page
+            flash("Deposit Completed")
+            app.logger.debug("Deposit Completed")
+            return render_template('account.html', name = name[0], balance = new_balance[0])
