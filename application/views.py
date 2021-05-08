@@ -129,7 +129,7 @@ def account():
 
 
 
-@app.route('/account', methods=["GET","POST"])
+@app.route('/account/deposit', methods=("POST",))
 def deposit():
     if (request.method == "POST"):
         new_deposit = request.form.get("deposit")
@@ -159,7 +159,7 @@ def deposit():
             return render_template('account.html', name = name[0], balance = new_balance[0])
 
     
-@app.route('/account', methods=["GET","POST"])
+@app.route('/account/withdraw', methods=("POST",))
 def withdraw():
     if (request.method == "POST"):
         new_withdraw = request.form.get("withdraw")
@@ -174,7 +174,7 @@ def withdraw():
             conn = sqlite3.connect('bankdata.db')
             cur = conn.cursor()
             balance = cur.execute("select currentBalance from Accounts where userId= ? ",[userid]).fetchone()
-            if (balance >= float(new_withdraw)):
+            if (balance[0] >= float(new_withdraw)):
                 # update balance in the database account
                 name = cur.execute("select name from Users where userId= ? ",[userid]).fetchone()
                 cur.execute("update Accounts set currentBalance = currentBalance - ? where userId= ? ", [float(new_withdraw), userid])
