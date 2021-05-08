@@ -4,9 +4,6 @@ from flask import render_template, request, redirect, url_for, session
 from application.functions.util import create_salt, hash_password, validate_str, create_random_userid, comments
 from application.functions.data_access import create_user, create_account, get_name_from_userid
 
-
-
-
 @app.route('/', methods=["GET","POST"])
 def home():
     app.logger.debug("Home page accessed")
@@ -63,7 +60,7 @@ def about():
             comments[name[0]]=comment
         return render_template('about.html', comments = comments)
 
-    return render_template('home.html')    
+    return redirect(url_for('home'))    
 
 @app.route('/logout')
 def logout():
