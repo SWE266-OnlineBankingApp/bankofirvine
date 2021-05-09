@@ -109,7 +109,10 @@ def register():
                 return render_template('register.html', feedback=nfeedback)
             if (not validate_num(initial_balance_str)):
                 nfeedback = "Initial Balance must be a whole number or a number with two decimal digits. Please try again."
-                return render_template('register.html', feedback=nfeedback)          
+                return render_template('register.html', feedback=nfeedback)   
+            if (not validate_str(password)):
+                nfeedback = "Password is not valid. Password may only contain numbers 0-9, letters a-z, special characters _\-." 
+                return render_template('register.html', feedback=nfeedback)   
             if (password != confirm_password):
                 nfeedback = "Password fields do not match. Please try again."
                 return render_template('register.html', feedback=nfeedback)
