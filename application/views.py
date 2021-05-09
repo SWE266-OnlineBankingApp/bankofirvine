@@ -190,19 +190,13 @@ def deposit():
                 userid = session.get("USER")
                 conn = sqlite3.connect('bankdata.db')
                 cur = conn.cursor()
-                # does name store in the cache anywhere???
-                # name = cur.execute("select name from Users where userId= ? ",[userid]).fetchone()
                 cur.execute("update Accounts set currentBalance = currentBalance + ? where userId= ? ", [float(new_deposit), userid])
                 conn.commit()
-                new_balance = cur.execute("select currentBalance from Accounts where userId= ? ",[userid]).fetchone()
-                app.logger.debug("Got new balance -> " + str(new_balance[0]))
                 conn.close()
                 # update balance shown on the page
                 flash("Deposit Completed")
                 app.logger.debug("Deposit Completed")
-                global account_holder
-                app.logger.debug("Got name -> " + account_holder[0])
-                return render_template('account.html', name = account_holder[0], balance = new_balance[0])
+                return redirect(url_for('account'))  
     except Exception as e:
         error_handler(e)
     
@@ -224,15 +218,12 @@ def withdraw():
                 balance = cur.execute("select currentBalance from Accounts where userId= ? ",[userid]).fetchone()
                 if (balance[0] >= float(new_withdraw)):
                     # update balance in the database account
-                    # name = cur.execute("select name from Users where userId= ? ",[userid]).fetchone()
                     cur.execute("update Accounts set currentBalance = currentBalance - ? where userId= ? ", [float(new_withdraw), userid])
                     conn.commit()
-                    new_balance = cur.execute("select currentBalance from Accounts where userId= ? ",[userid]).fetchone()
                     conn.close()
                     # update balance shown on the page
                     flash("Withdrawal Completed")
-                    global account_holder
-                    return render_template('account.html', name = account_holder[0], balance = new_balance[0])
+                    return redirect(url_for('account'))  
                 else:
                     flash("Not Enough Balance")
                     return redirect(url_for('account'))  
