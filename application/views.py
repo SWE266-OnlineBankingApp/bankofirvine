@@ -2,7 +2,7 @@ import sqlite3
 from application import app
 from flask import render_template, request, redirect, url_for, session, flash
 from application.functions.util import create_salt, hash_password, validate_str, validate_num, create_random_userid, comments
-from application.functions.data_access import create_user, create_account, get_name_from_userid
+from application.functions.data_access import create_user, create_account, get_user_authentication_info, get_name_from_userid, deposit_and_update, get_currentBalance_from_userid, withdraw_and_update
 
 # account_holder will be a tuple containing name of the user after login 
 account_holder = None
@@ -31,10 +31,7 @@ def home():
                 return render_template('home.html',feedback=nfeedback)
 
             #code to check against DB 
-            conn = sqlite3.connect('bankdata.db')
-            cur = conn.cursor()
-            result = cur.execute("select userId, password, salt from Users where username= ?", (username,)).fetchone()
-            conn.close()
+            result = get_user_authentication_info(username)
             if (not result):
                 # invalid username
                 app.logger.error("On Login: details not found for username = {}".format(username))
@@ -65,6 +62,7 @@ def home():
     except Exception as e:
         error_handler(e)        
 
+
 @app.route('/about', methods=["GET","POST"])
 def about():
     try:
@@ -81,6 +79,7 @@ def about():
     except Exception as e:
         error_handler(e)        
 
+
 @app.route('/logout')
 def logout():
     app.logger.debug("Logging out")
@@ -88,6 +87,7 @@ def logout():
     global account_holder
     account_holder = None
     return redirect(url_for('home'))
+
 
 @app.route('/register', methods=["GET","POST"])
 def register():
@@ -144,6 +144,7 @@ def register():
     except Exception as e:
         error_handler(e)            
 
+
 @app.route('/account')
 def account():
     try:
@@ -151,11 +152,7 @@ def account():
             userid = session.get("USER")
             app.logger.debug("Account access")
             app.logger.debug("Here: " +userid)
-            conn = sqlite3.connect('bankdata.db')
-            cur = conn.cursor()
-            # name = cur.execute("select name from Users where userId= ? ",[userid]).fetchone()
-            balance = cur.execute("select currentBalance from Accounts where userid=? ",[userid]).fetchone()
-            conn.close()
+            balance = get_currentBalance_from_userid(userid)
             global account_holder
             if(account_holder == None or balance == None):
                 app.logger.error("Account query had empty result")
@@ -169,7 +166,6 @@ def account():
             return redirect(url_for('home'))  
     except Exception as e:
         error_handler(e)            
-
 
 
 @app.route('/account/deposit', methods=("POST",))
@@ -187,18 +183,15 @@ def deposit():
                 # update balance in the database account
                 app.logger.debug("Accessing db")
                 userid = session.get("USER")
-                conn = sqlite3.connect('bankdata.db')
-                cur = conn.cursor()
-                cur.execute("update Accounts set currentBalance = currentBalance + ? where userId= ? ", [float(new_deposit), userid])
-                conn.commit()
-                conn.close()
-                # update balance shown on the page
+                deposit_and_update(new_deposit, userid)
+                # notify user deposit completed
                 flash("Deposit Completed")
                 app.logger.debug("Deposit Completed")
                 return redirect(url_for('account'))  
     except Exception as e:
         error_handler(e)
     
+
 @app.route('/account/withdraw', methods=("POST",))
 def withdraw():
     try:
@@ -212,15 +205,10 @@ def withdraw():
             else:
                 # check if there is enough amount in the database account
                 userid = session.get("USER")
-                conn = sqlite3.connect('bankdata.db')
-                cur = conn.cursor()
-                balance = cur.execute("select currentBalance from Accounts where userId= ? ",[userid]).fetchone()
+                balance = get_currentBalance_from_userid(userid)
                 if (balance[0] >= float(new_withdraw)):
-                    # update balance in the database account
-                    cur.execute("update Accounts set currentBalance = currentBalance - ? where userId= ? ", [float(new_withdraw), userid])
-                    conn.commit()
-                    conn.close()
-                    # update balance shown on the page
+                    # update balance
+                    withdraw_and_update(new_withdraw, userid)
                     flash("Withdrawal Completed")
                     return redirect(url_for('account'))  
                 else:
