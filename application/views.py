@@ -163,7 +163,6 @@ def account():
                 session.pop("USER",None)
                 return render_template('home.html',nfeedback = nfeedback)
             
-            # return render_template('account.html', name = name[0], balance = balance[0])
             return render_template('account.html', name = account_holder[0], balance = "{:.2f}".format(balance[0]))
         else:
             app.logger.error("Session not set when accessing account")
