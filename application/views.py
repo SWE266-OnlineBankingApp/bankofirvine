@@ -75,7 +75,7 @@ def register():
         username = request.form.get("username")
         password = request.form.get("password")
         confirm_password = request.form.get("cpassword")
-        initial_balance = request.form.get("ibalance", type= float)
+        initial_balance_str = request.form.get("ibalance")
         name = request.form.get("name")
         
         #validate user input. If invalid return error message to the user
@@ -85,13 +85,14 @@ def register():
         if (not validate_str(name)):
             nfeedback = "Name is not valid. Please select another name. (JK! you probably made a typo)"
             return render_template('register.html', feedback=nfeedback)
-        if (not validate_num(initial_balance)):
-            nfeedback = "Initial Balance is not valid. Please choose a valid initial balance."
+        if (not validate_num(initial_balance_str)):
+            nfeedback = "Initial Balance must be a whole number or a number with two decimal digits."
             return render_template('register.html', feedback=nfeedback)          
         if (password != confirm_password):
             nfeedback = "Password fields do not match. Please try again."
             return render_template('register.html', feedback=nfeedback)
         
+        initial_balance = float(initial_balance_str)
         userid = create_random_userid()
         salt = create_salt()
         password_hash = hash_password(password, salt)
@@ -105,7 +106,7 @@ def register():
         else:
             # # user created. get userid for account creation
             # userid = get_userid_from_username(username)
-            # app.logger.debug("created userid = {}".format(userid))
+            # app.logger.debug("created userid = {s}".format(userid))
             # userid should always be present since we just successfully created a user. nonetheless let's check if a userid was returned by the DB
             # if (userid):
             create_account(initial_balance, userid)
