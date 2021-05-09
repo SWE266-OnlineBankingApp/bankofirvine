@@ -4,7 +4,6 @@ from flask import render_template, request, redirect, url_for, session, flash
 from application.functions.util import create_salt, hash_password, validate_str, validate_num, create_random_userid, comments
 from application.functions.data_access import create_user, create_account, get_user_authentication_info, get_name_from_userid, deposit_and_update, get_currentBalance_from_userid, withdraw_and_update
 
-# account_holder will be a tuple containing name of the user after login 
 account_holder = None
 
 @app.errorhandler(404)
@@ -12,6 +11,9 @@ account_holder = None
 @app.errorhandler(500)
 def error_handler(e):
     app.logger.error("Error Handler "+str(e))
+    session.pop("USER",None)
+    global account_holder
+    account_holder = None
     return render_template('error.html')
 
 @app.route('/', methods=["GET","POST"])
@@ -26,7 +28,7 @@ def home():
 
             #validate the username
             if(not validate_str(username)):
-                app.logger.error("username = {} failed validation".format(username))
+                app.logger.error("username = {} failed validation".format(str(username)))
                 nfeedback = f"Username or Password is invalid"
                 return render_template('home.html',feedback=nfeedback)
 
@@ -34,7 +36,7 @@ def home():
             result = get_user_authentication_info(username)
             if (not result):
                 # invalid username
-                app.logger.error("On Login: details not found for username = {}".format(username))
+                app.logger.error("On Login: details not found for username = {}".format(str(username)))
                 nfeedback = f"Username or Password is invalid"
                 return render_template('home.html',nfeedback=nfeedback)
             else:
@@ -53,7 +55,7 @@ def home():
                     return redirect(url_for('account'))
                 else:
                     # password fail
-                    app.logger.error("On Login: password invalid for username = {}".format(username))
+                    app.logger.error("On Login: password invalid for username = {}".format(str(username)))
                     nfeedback = f"Username or Password is invalid"
                     return render_template('home.html',nfeedback=nfeedback)
         
@@ -68,11 +70,11 @@ def about():
     try:
         if session.get("USER", None) is not None:
             app.logger.debug("About")
-
             if(request.method=="POST"):
                 comment = request.form.get("comment")
                 name = get_name_from_userid(session.get("USER"))
                 comments[name[0]]=comment
+                app.logger.debug("About comment added")
             return render_template('about.html', comments = comments)
 
         return redirect(url_for('home'))   
@@ -103,18 +105,23 @@ def register():
             #validate user input. If invalid return error message to the user
             if(not validate_str(username)):
                 nfeedback = "Username is not valid. Please select another username"
+                app.logger.error("On Register username invalid "+str(username))
                 return render_template('register.html', feedback=nfeedback)
             if (not validate_str(name)):
                 nfeedback = "Name is not valid. Please select another name. (JK! you probably made a typo)"
+                app.logger.error("On Register name invalid "+str(name))
                 return render_template('register.html', feedback=nfeedback)
             if (not validate_num(initial_balance_str)):
                 nfeedback = "Initial Balance must be a whole number or a number with two decimal digits. Please try again."
+                app.logger.error("On Register initial_balance invalid "+str(initial_balance_str))
                 return render_template('register.html', feedback=nfeedback)   
             if (not validate_str(password)):
-                nfeedback = "Password is not valid. Password may only contain digits 0-9, letters a-z, and special characters _-." 
+                nfeedback = "Password is not valid. Password may only contain digits 0-9, letters a-z, and special characters _-. only" 
+                app.logger.error("On Register password invalid "+str(password))
                 return render_template('register.html', feedback=nfeedback)   
             if (password != confirm_password):
                 nfeedback = "Password fields do not match. Please try again."
+                app.logger.error("On Register password-cpassword mismatch ")
                 return render_template('register.html', feedback=nfeedback)
             
             initial_balance = float(initial_balance_str)
@@ -126,22 +133,14 @@ def register():
                 app.logger.debug("Created new user")
             except sqlite3.IntegrityError as e:
                 # uniqu constraint failed. send user back to login page with user already exists
+                app.logger.error("On Register user exists ")
                 nfeedback = "User already exists."
                 return render_template('home.html',nfeedback=nfeedback)
             else:
-                # # user created. get userid for account creation
-                # userid = get_userid_from_username(username)
-                # app.logger.debug("created userid = {s}".format(userid))
-                # userid should always be present since we just successfully created a user. nonetheless let's check if a userid was returned by the DB
-                # if (userid):
                 create_account(initial_balance, userid)
                 app.logger.debug("New Registration completed")
                 pfeedback = f"Successful registration. Please login"
                 return render_template('home.html',pfeedback=pfeedback)
-                # else:
-                #     app.logger.error("Couldn't locate userid of username= {}".format(username))
-                #     feedback = f"Couldn't register. Please contact the administrator"
-                #     return render_template('home.html',feedback=feedback)
         else:
             return render_template('register.html') 
     except Exception as e:
@@ -154,7 +153,6 @@ def account():
         if session.get("USER", None) is not None:
             userid = session.get("USER")
             app.logger.debug("Account access")
-            app.logger.debug("Here: " +userid)
             balance = get_currentBalance_from_userid(userid)
             global account_holder
             if(account_holder == None or balance == None):
@@ -174,23 +172,27 @@ def account():
 @app.route('/account/deposit', methods=("POST",))
 def deposit():
     try:
-        if (request.method == "POST"):
-            new_deposit = request.form.get("deposit")
-            app.logger.debug("We Have A New Deposit -> " + new_deposit)
-            if (not validate_num(new_deposit)):
-                # warning user the input format is invalid
-                flash("Invalid input. Please enter a whole number or a number with two digits")
-                app.logger.debug("Invalid input")
-                return redirect(url_for('account'))  
-            else:
-                # update balance in the database account
-                app.logger.debug("Accessing db")
-                userid = session.get("USER")
-                deposit_and_update(new_deposit, userid)
-                # notify user deposit completed
-                flash("Deposit Completed")
-                app.logger.debug("Deposit Completed")
-                return redirect(url_for('account'))  
+        if session.get("USER", None) is not None:
+            if (request.method == "POST"):
+                new_deposit = request.form.get("deposit")
+                app.logger.debug("We Have A New Deposit -> " + new_deposit)
+                if (not validate_num(new_deposit)):
+                    # warning user the input format is invalid
+                    flash("Invalid input. Please enter a either whole number or a number with upto two decimals")
+                    app.logger.error("Invalid input for deposit "+str(new_deposit))
+                    return redirect(url_for('account'))  
+                else:
+                    # update balance in the database account
+                    app.logger.debug("Accessing db")
+                    userid = session.get("USER")
+                    deposit_and_update(new_deposit, userid)
+                    # notify user deposit completed
+                    flash("Deposit Completed")
+                    app.logger.debug("Deposit Completed")
+                    return redirect(url_for('account'))
+        else:
+            app.logger.error("Session not set when accessing account deposit")
+            error_handler("Session invalid on deposit")              
     except Exception as e:
         error_handler(e)
     
@@ -198,24 +200,31 @@ def deposit():
 @app.route('/account/withdraw', methods=("POST",))
 def withdraw():
     try:
-        if (request.method == "POST"):
-            new_withdraw = request.form.get("withdraw")
-            app.logger.debug("We Have A New Withdrawal -> " + new_withdraw)
-            if (not validate_num(new_withdraw)):
-                # warning user the input format is invalid
-                flash("Invalid input. Please enter a whole number or a number with two digits")
-                return redirect(url_for('account'))  
-            else:
-                # check if there is enough amount in the database account
-                userid = session.get("USER")
-                balance = get_currentBalance_from_userid(userid)
-                if (balance[0] >= float(new_withdraw)):
-                    # update balance
-                    withdraw_and_update(new_withdraw, userid)
-                    flash("Withdrawal Completed")
+        if session.get("USER", None) is not None:
+            if (request.method == "POST"):
+                new_withdraw = request.form.get("withdraw")
+                app.logger.debug("We Have A New Withdrawal -> " + new_withdraw)
+                if (not validate_num(new_withdraw)):
+                    # warning user the input format is invalid
+                    app.logger.error("Invalid input for withdraw "+str(new_withdraw))
+                    flash("Invalid input. Please enter either a whole number or a number with upto two decimals")
                     return redirect(url_for('account'))  
                 else:
-                    flash("Not Enough Balance")
-                    return redirect(url_for('account'))  
+                    # check if there is enough amount in the database account
+                    userid = session.get("USER")
+                    balance = get_currentBalance_from_userid(userid)
+                    if (balance[0] >= float(new_withdraw)):
+                        # update balance
+                        withdraw_and_update(new_withdraw, userid)
+                        flash("Withdrawal Completed")
+                        return redirect(url_for('account'))  
+                    else:
+                        app.logger.error("Withdrawal attempt with insufficient balance")
+                        flash("Not Enough Balance")
+                        return redirect(url_for('account'))
+        else:
+            app.logger.error("Session not set when accessing account withdraw")
+            error_handler("Session invalid on withdraw")
+            
     except Exception as e:
         error_handler(e)                   
