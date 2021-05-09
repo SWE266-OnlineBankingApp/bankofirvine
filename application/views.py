@@ -4,6 +4,9 @@ from flask import render_template, request, redirect, url_for, session, flash
 from application.functions.util import create_salt, hash_password, validate_str, validate_num, create_random_userid, comments
 from application.functions.data_access import create_user, create_account, get_name_from_userid
 
+# account_holder will be a tuple containing name of the user after login 
+account_holder = None
+
 @app.route('/', methods=["GET","POST"])
 def home():
     app.logger.debug("Home page accessed")
@@ -38,7 +41,10 @@ def home():
             client_password_hash = hash_password(password, stored_salt)
             if (client_password_hash == stored_password_hash):
                 # password success
-                session["USER"] = userid      
+                session["USER"] = userid    
+                global account_holder
+                account_holder = get_name_from_userid(userid)  
+                app.logger.debug("Home Page: Account holder -> " + account_holder[0])
                 return redirect(url_for('account'))
             else:
                 # password fail
@@ -66,6 +72,8 @@ def about():
 def logout():
     app.logger.debug("Logging out")
     session.pop("USER",None)
+    global account_holder
+    account_holder = None
     return redirect(url_for('home'))
 
 @app.route('/register', methods=["GET","POST"])
@@ -128,17 +136,18 @@ def account():
         app.logger.debug("Here: " +userid)
         conn = sqlite3.connect('bankdata.db')
         cur = conn.cursor()
-        name = cur.execute("select name from Users where userId= ? ",[userid]).fetchone()
+        # name = cur.execute("select name from Users where userId= ? ",[userid]).fetchone()
         balance = cur.execute("select currentBalance from Accounts where userid=? ",[userid]).fetchone()
         conn.close()
-
-        if(name == None or balance == None):
+        global account_holder
+        if(account_holder == None or balance == None):
             app.logger.error("Account query had empty result")
             nfeedback = f"Something went wrong please login again"
             session.pop("USER",None)
             return render_template('home.html',nfeedback = nfeedback)
         
-        return render_template('account.html', name = name[0], balance = balance[0])
+        # return render_template('account.html', name = name[0], balance = balance[0])
+        return render_template('account.html', name = account_holder[0], balance = balance[0])
     else:
         app.logger.error("Session not set when accessing account")
         return redirect(url_for('home'))   
@@ -162,8 +171,7 @@ def deposit():
             conn = sqlite3.connect('bankdata.db')
             cur = conn.cursor()
             # does name store in the cache anywhere???
-            name = cur.execute("select name from Users where userId= ? ",[userid]).fetchone()
-            app.logger.debug("Got name -> " + name[0])
+            # name = cur.execute("select name from Users where userId= ? ",[userid]).fetchone()
             cur.execute("update Accounts set currentBalance = currentBalance + ? where userId= ? ", [float(new_deposit), userid])
             conn.commit()
             new_balance = cur.execute("select currentBalance from Accounts where userId= ? ",[userid]).fetchone()
@@ -172,7 +180,9 @@ def deposit():
             # update balance shown on the page
             flash("Deposit Completed")
             app.logger.debug("Deposit Completed")
-            return render_template('account.html', name = name[0], balance = new_balance[0])
+            global account_holder
+            app.logger.debug("Got name -> " + account_holder[0])
+            return render_template('account.html', name = account_holder[0], balance = new_balance[0])
 
     
 @app.route('/account/withdraw', methods=("POST",))
@@ -192,14 +202,15 @@ def withdraw():
             balance = cur.execute("select currentBalance from Accounts where userId= ? ",[userid]).fetchone()
             if (balance[0] >= float(new_withdraw)):
                 # update balance in the database account
-                name = cur.execute("select name from Users where userId= ? ",[userid]).fetchone()
+                # name = cur.execute("select name from Users where userId= ? ",[userid]).fetchone()
                 cur.execute("update Accounts set currentBalance = currentBalance - ? where userId= ? ", [float(new_withdraw), userid])
                 conn.commit()
                 new_balance = cur.execute("select currentBalance from Accounts where userId= ? ",[userid]).fetchone()
                 conn.close()
                 # update balance shown on the page
                 flash("Withdrawal Completed")
-                return render_template('account.html', name = name[0], balance = new_balance[0])
+                global account_holder
+                return render_template('account.html', name = account_holder[0], balance = new_balance[0])
             else:
                 flash("Not Enough Balance")
                 return redirect(url_for('account'))  
