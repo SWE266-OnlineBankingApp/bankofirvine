@@ -94,7 +94,7 @@ def register():
             nfeedback = "Name is not valid. Please select another name. (JK! you probably made a typo)"
             return render_template('register.html', feedback=nfeedback)
         if (not validate_num(initial_balance_str)):
-            nfeedback = "Initial Balance must be a whole number or a number with two decimal digits."
+            nfeedback = "Initial Balance must be a whole number or a number with two decimal digits. Please try again."
             return render_template('register.html', feedback=nfeedback)          
         if (password != confirm_password):
             nfeedback = "Password fields do not match. Please try again."
