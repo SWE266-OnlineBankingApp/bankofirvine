@@ -34,3 +34,34 @@ flask run
 View bankofirvine app at: http://localhost:5000
 
 ## 4. Instruction of bankofirvine user
+
+## 5. Unit test to the application
+
+We use Selenium to do unit tests under Chrome. If interested, one has to install the Selenium first:
+```
+pip3 install selenium
+```
+
+Download a Chrome driver: (version 90. recommended)
+```
+https://sites.google.com/a/chromium.org/chromedriver/downloads
+```
+
+Put the driver in the following path: (under Mac)
+```
+/usr/local/bin
+```
+
+For macOS version higher than 10.15, remember to approve the usage of driver with this command:
+```
+xattr -d com.apple.quarantine chromedriver
+```
+
+After the all the preparation, we can test the application.
+Change to the directory and execute the test program.
+```
+cd bankofirvine/application
+python3 testApplication.py
+```
+
+CAUTION: You have to start the server every time you want to do the test, since the testing involves registering a new account. 
