@@ -189,7 +189,12 @@ def deposit():
                     # notify user deposit completed
                     flash("Deposit Completed")
                     app.logger.debug("Deposit Completed")
-                    return redirect(url_for('account'))
+                    # return redirect(url_for('account'))
+
+                    balance = get_currentBalance_from_userid(userid)
+                    global account_holder
+                    return render_template('account.html', name = account_holder[0], balance = "{:.2f}".format(balance[0]))
+
         else:
             app.logger.error("Session not set when accessing account deposit")
             error_handler("Session invalid on deposit")              
