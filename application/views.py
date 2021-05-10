@@ -29,15 +29,15 @@ def home():
             #validate the username
             if(not validate_str(username)):
                 app.logger.error("username = {} failed validation".format(str(username)))
-                nfeedback = f"Username or Password is invalid"
-                return render_template('home.html',feedback=nfeedback)
+                nfeedback = f"Username is invalid"
+                return render_template('home.html',nfeedback=nfeedback)
 
             #code to check against DB 
             result = get_user_authentication_info(username)
             if (not result):
                 # invalid username
                 app.logger.error("On Login: details not found for username = {}".format(str(username)))
-                nfeedback = f"Username or Password is invalid"
+                nfeedback = f"Username is invalid"
                 return render_template('home.html',nfeedback=nfeedback)
             else:
                 #valid username. check password hash is correct here
@@ -56,7 +56,7 @@ def home():
                 else:
                     # password fail
                     app.logger.error("On Login: password invalid for username = {}".format(str(username)))
-                    nfeedback = f"Username or Password is invalid"
+                    nfeedback = f"Password is invalid"
                     return render_template('home.html',nfeedback=nfeedback)
         
         session.pop("USER",None)                                    
