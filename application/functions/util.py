@@ -10,6 +10,7 @@ comments = {
             "Barney" : "Wilma was super helpful in setting up my account.",
             "Betty" : "Had to a wait a bit, but wonderful service when they got to me."
         }
+MAX_STRING_LENGTH = 50 # maximum length of username and name
 
 # Numeric validation (e.g. balance)
 def validate_num (num_input):
@@ -27,6 +28,9 @@ def hash_password(password, salt):
 
 def create_random_userid():
     return str(uuid.uuid4())    
+
+def exceeds_max_length(string):
+    return len(string)>MAX_STRING_LENGTH
 
 # if __name__ == "__main__":
 #     print("test1", validate_num ("0"))

@@ -1,7 +1,7 @@
 import sqlite3
 from application import app
 from flask import render_template, request, redirect, url_for, session, flash
-from application.functions.util import create_salt, hash_password, validate_str, validate_num, create_random_userid, comments
+from application.functions.util import create_salt, hash_password, validate_str, validate_num, create_random_userid, comments, exceeds_max_length
 from application.functions.data_access import create_user, create_account, get_user_authentication_info, get_name_from_userid, deposit_and_update, get_currentBalance_from_userid, withdraw_and_update
 
 account_holder = None
@@ -103,6 +103,14 @@ def register():
             name = request.form.get("name")
             
             #validate user input. If invalid return error message to the user
+            if (exceeds_max_length(username)):
+                nfeedback = "Username is too long. Please select another username"
+                app.logger.error("On Register username invalid "+str(username))
+                return render_template('register.html', feedback=nfeedback)
+            if (exceeds_max_length(name)):
+                nfeedback = "Name is too long. Please select another name"
+                app.logger.error("On Register name invalid "+str(name))
+                return render_template('register.html', feedback=nfeedback)
             if(not validate_str(username)):
                 nfeedback = "Username is not valid. Please select another username"
                 app.logger.error("On Register username invalid "+str(username))
