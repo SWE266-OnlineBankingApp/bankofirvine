@@ -61,8 +61,8 @@ For windows user, add the directory containing driver into your PATH. Or, you ca
 setx /m path "%path%;<DIR>"
 ```
 
-After the all the preparation, we can test the application.
-Change to the directory and execute the test program.
+We can now test the application.
+Change to the relevant directory and execute the test program.
 ```
 cd bankofirvine/application
 python3 testApplication.py
