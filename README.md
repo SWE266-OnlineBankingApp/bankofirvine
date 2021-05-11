@@ -41,7 +41,7 @@ After login successfully, the user will be directed to the account page. One can
 
 ## 5. Unit tests
 
-There are two part of testing in this application.
+There are two parts of testing in this application.
 
 ### Utility testing
 
