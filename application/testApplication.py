@@ -27,7 +27,7 @@ class Test_Application(unittest.TestCase):
         driver.find_element_by_id("password").send_keys("0123")
         driver.find_element_by_id("signin").click()
         assert driver.title == "Home | Bank of Irvine"
-        assert ("Username or Password is invalid" in driver.page_source)
+        assert ("Password is invalid" in driver.page_source)
 
         # test - login fail, nonexist username.
         print("Test: login fail, non-exist username")
@@ -35,7 +35,7 @@ class Test_Application(unittest.TestCase):
         driver.find_element_by_id("password").send_keys(password)
         driver.find_element_by_id("signin").click()
         assert driver.title == "Home | Bank of Irvine"
-        assert ("Username or Password is invalid" in driver.page_source)
+        assert ("Username is invalid" in driver.page_source)
 
 
 #         logout() test skipped, since it's tested in home()
