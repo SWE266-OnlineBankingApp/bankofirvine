@@ -75,7 +75,7 @@ For Windows user, add the directory containing driver into your PATH. Or, you ca
 setx /m path "%path%;<DIR>"
 ```
 
-We can now test the application.
+After all the preparations, we can now test the application.
 Change to the relevant directory and execute the test program.
 ```
 cd bankofirvine/application
