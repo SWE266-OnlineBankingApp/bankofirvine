@@ -35,6 +35,12 @@ View bankofirvine app at: http://localhost:5000
 
 ## 4. Instruction of bankofirvine user
 
+After connecting to the website, the user will face the homepage first. Here, the user can create a new account by clicking the Register text on the left, or login with his account. 
+
+After login successfully, the user will be directed to the account page. One can deposit or withdraw on the right, and the information will be shown on the left-hand side. 
+
+We also offer a comment function in our application. When the user clicks on the text "Bank of Irvine" in the account page, he will be directed to a bulletin board, where the user can leave a comment about our service.
+
 ## 5. Unit tests
 
 There are two part of testing in this application.
@@ -43,6 +49,13 @@ There are two part of testing in this application.
 
 The utilities tested here are the validations we used in validating strings and numbers.
 For testing them, we use the unittest framework in Python. And one can execute the python file under the application directory.
+
+For executing this test, one can run the file in python
+
+```
+cd application
+python3 testUtil.py
+```
 
 ### Application testing
 
