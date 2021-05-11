@@ -39,8 +39,6 @@ After connecting to the website, the user will face the homepage first. Here, th
 
 After login successfully, the user will be directed to the account page. One can deposit or withdraw on the right, and the information will be shown on the left-hand side. 
 
-We also offer a comment function in our application. When the user clicks on the text "Bank of Irvine" in the account page, he will be directed to a bulletin board, where the user can leave a comment about our service.
-
 ## 5. Unit tests
 
 There are two part of testing in this application.
