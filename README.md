@@ -22,7 +22,7 @@ python3 -m pip install -r requirements.txt
 
 For Windows
 ```
-py -m venv ./
+py -m venv .\
 .\Scripts\activate
 cd bankofirvine
 python3 -m pip install -r requirements.txt
