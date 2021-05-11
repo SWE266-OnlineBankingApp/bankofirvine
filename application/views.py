@@ -29,15 +29,15 @@ def home():
             #validate the username
             if(not validate_str(username)):
                 app.logger.error("username = {} failed validation".format(str(username)))
-                nfeedback = f"Username or Password is invalid"
-                return render_template('home.html',feedback=nfeedback)
+                nfeedback = f"Username is invalid"
+                return render_template('home.html',nfeedback=nfeedback)
 
             #code to check against DB 
             result = get_user_authentication_info(username)
             if (not result):
                 # invalid username
                 app.logger.error("On Login: details not found for username = {}".format(str(username)))
-                nfeedback = f"Username or Password is invalid"
+                nfeedback = f"Username is invalid"
                 return render_template('home.html',nfeedback=nfeedback)
             else:
                 #valid username. check password hash is correct here
@@ -56,7 +56,7 @@ def home():
                 else:
                     # password fail
                     app.logger.error("On Login: password invalid for username = {}".format(str(username)))
-                    nfeedback = f"Username or Password is invalid"
+                    nfeedback = f"Password is invalid"
                     return render_template('home.html',nfeedback=nfeedback)
         
         session.pop("USER",None)                                    
@@ -189,7 +189,12 @@ def deposit():
                     # notify user deposit completed
                     flash("Deposit Completed")
                     app.logger.debug("Deposit Completed")
-                    return redirect(url_for('account'))
+                    # return redirect(url_for('account'))
+
+                    balance = get_currentBalance_from_userid(userid)
+                    global account_holder
+                    return render_template('account.html', name = account_holder[0], balance = "{:.2f}".format(balance[0]))
+
         else:
             app.logger.error("Session not set when accessing account deposit")
             error_handler("Session invalid on deposit")              

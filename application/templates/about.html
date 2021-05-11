@@ -2,32 +2,33 @@
 
 {% block title %}Account | Bank of Irvine{% endblock %}
 
-{% block main %} 
+{% block main %}
 <div class="container bg-info p-4" id="about">
-    <div class="row">
-      <div class="col-sm-2"></div>
-      <div class="col-sm-8  bg-white" style="border-right: 2px solid #007bff; ">
-        <p class="text-info mt-3 ml-3" style="font-weight: bold;font-size: 1.3rem; text-align: center;">
-          SEE WHAT OUR OTHER CUSTOMERS HAVE TO SAY</p>
-          <ul>
-            {% for name, comment in comments.items() %}
-            <li><b class="text-primary">{{ name }}</b> : {{ comment | safe}}</li><br />
-            {% endfor %}
-          </ul>
-        <form action="/about" method="POST" class="col-12 pb-3 " id="formregister">
-          <div class="form-group">
-            <label class="text-dark">We'd love to hear from you too!</label>
-            <input type="text" name="comment" id="comment" class="form-control" placeholder="Add a comment">
-          </div>
-          <div class="btn-group">
+  <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8  bg-white" style="border-right: 2px solid #007bff; ">
+      <p class="text-info mt-3 ml-3" style="font-weight: bold;font-size: 1.3rem; text-align: center;">
+        SEE WHAT OUR OTHER CUSTOMERS HAVE TO SAY</p>
+      <ul>
+        {% for name, comment in comments.items() %}
+        <li><b class="text-primary">{{ name }}</b> : {{ comment | safe}}</li><br />
+        {% endfor %}
+      </ul>
+      <form action="/about" method="POST" class="col-12 pb-3 " id="formregister">
+        <div class="form-group">
+          <label class="text-dark">We'd love to hear from you too!</label>
+          <input type="text" name="comment" id="comment" class="form-control" placeholder="Add a comment">
+        </div>
+        <div class="btn-group">
           <button id="comment" type="submit" class="btn btn-info btn-block mt-3 mb-5 "
-          style="width: 80px;margin-left:1rem; ">Submit</button>
-          <a href="{{ url_for('account') }}" class="btn btn-info btn-block mt-3 mb-5" style="margin-left:30rem; " role="button">Go Back</a>
-        </div>  
-        </form>  
+            style="width: 80px;margin-left:1rem; ">Submit</button>
+          <a href="{{ url_for('account') }}" class="btn btn-info btn-block mt-3 mb-5" style="margin-left:30rem; "
+            role="button">Go Back</a>
+        </div>
+      </form>
 
-      </div>
     </div>
   </div>
+</div>
 
 {% endblock %}
