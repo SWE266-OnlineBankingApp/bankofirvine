@@ -5,16 +5,26 @@ check your python version: python --version
 * [Python3](https://www.python.org/downloads/)
 
 ## 1. Clone bankofirvine
+In your preferred directory
 ```
 git clone https://github.com/SWE266-OnlineBankingApp/bankofirvine.git
-cd bankofirvine
 ```
 
 ## 2. Set up virtual enviroment and install dependecies 
-Set up a virtual enviroment at your preferred directory (\<DIR>) and install dependecies within the enviroment
+Set up a virtual enviroment at your preferred directory from previous step and install dependecies within the enviroment
+For Mac
 ```
-python3 -m venv <DIR>
-source <DIR>/bin/activate
+python3 -m venv ./
+source ./bin/activate
+cd bankofirvine
+python3 -m pip install -r requirements.txt
+```
+
+For Windows
+```
+py -m venv ./
+.\Scripts\activate
+cd bankofirvine
 python3 -m pip install -r requirements.txt
 ```
 
