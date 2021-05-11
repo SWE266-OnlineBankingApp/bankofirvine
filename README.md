@@ -47,7 +47,7 @@ Download a Chrome driver: (version 90. recommended)
 https://sites.google.com/a/chromium.org/chromedriver/downloads
 ```
 
-Put the driver in the following path: (under Mac)
+For mac user, put the driver in the following path:
 ```
 /usr/local/bin
 ```
@@ -55,6 +55,10 @@ Put the driver in the following path: (under Mac)
 For macOS version higher than 10.15, remember to approve the usage of driver with this command:
 ```
 xattr -d com.apple.quarantine chromedriver
+```
+For windows user, add the directory containing driver into your PATH. Or, you can use the following command:
+```
+setx /m path "%path%;<DIR>"
 ```
 
 After the all the preparation, we can test the application.
