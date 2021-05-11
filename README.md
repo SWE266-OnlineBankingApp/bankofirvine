@@ -35,9 +35,23 @@ View bankofirvine app at: http://localhost:5000
 
 ## 4. Instruction of bankofirvine user
 
-## 5. Unit test to the application
+## 5. Unit tests
 
-We use Selenium to do unit tests under Chrome. If interested, one has to install the Selenium first:
+There are two part of testing in this application.
+
+### Utility testing
+
+The utilities tested here are the validations we used in validating strings and numbers.
+For testing them, we use the unittest framework in Python. And one can execute the python file under the application directory.
+
+### Application testing
+
+We use Selenium to do unit tests under Chrome browser. We covered 4 categories of testing here, including login, registration, deposit and withdrawal.
+The Selenium helps us automatically open the browser, input the test data, check results, and close the browser.
+
+### Executing Selenium testing
+
+If interested, one has to install the Selenium first:
 ```
 pip3 install selenium
 ```
@@ -56,7 +70,7 @@ For macOS version higher than 10.15, remember to approve the usage of driver wit
 ```
 xattr -d com.apple.quarantine chromedriver
 ```
-For windows user, add the directory containing driver into your PATH. Or, you can use the following command:
+For Windows user, add the directory containing driver into your PATH. Or, you can use the following command:
 ```
 setx /m path "%path%;<DIR>"
 ```
@@ -68,4 +82,4 @@ cd bankofirvine/application
 python3 testApplication.py
 ```
 
-CAUTION: You have to start the server every time you want to do the test, since the testing involves registering a new account. 
+CAUTION: You have to start the server every time you want to do the test, since the testing involves registering a new account.
