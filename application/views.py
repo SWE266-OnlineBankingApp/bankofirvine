@@ -189,11 +189,7 @@ def deposit():
                     # notify user deposit completed
                     flash("Deposit Completed")
                     app.logger.debug("Deposit Completed")
-                    # return redirect(url_for('account'))
-
-                    balance = get_currentBalance_from_userid(userid)
-                    global account_holder
-                    return render_template('account.html', name = account_holder[0], balance = "{:.2f}".format(balance[0]))
+                    return redirect(url_for('account'))
 
         else:
             app.logger.error("Session not set when accessing account deposit")
@@ -212,7 +208,7 @@ def withdraw():
                 if (not validate_num(new_withdraw)):
                     # warning user the input format is invalid
                     app.logger.error("Invalid input for withdraw "+str(new_withdraw))
-                    flash("Invalid input. Please enter a number with two decimal digits")
+                    flash("Invalid input. Please enter a number with upto two decimals")
                     return redirect(url_for('account'))  
                 else:
                     # check if there is enough amount in the database account
