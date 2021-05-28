@@ -112,7 +112,7 @@ def register():
                 app.logger.error("On Register name invalid "+str(name))
                 return render_template('register.html', feedback=nfeedback)
             if (not validate_num(initial_balance_str)):
-                nfeedback = "Initial Balance must be a whole number or a number with two decimal digits. Please try again."
+                nfeedback = "Initial Balance must be a number with two decimal digits. Please try again."
                 app.logger.error("On Register initial_balance invalid "+str(initial_balance_str))
                 return render_template('register.html', feedback=nfeedback)   
             if (not validate_str(password)):
@@ -178,7 +178,7 @@ def deposit():
                 app.logger.debug("We Have A New Deposit -> " + new_deposit)
                 if (not validate_num(new_deposit)):
                     # warning user the input format is invalid
-                    flash("Invalid input. Please enter a either whole number or a number with upto two decimals")
+                    flash("Invalid input. Please enter a number with two decimal digits")
                     app.logger.error("Invalid input for deposit "+str(new_deposit))
                     return redirect(url_for('account'))  
                 else:
@@ -212,7 +212,7 @@ def withdraw():
                 if (not validate_num(new_withdraw)):
                     # warning user the input format is invalid
                     app.logger.error("Invalid input for withdraw "+str(new_withdraw))
-                    flash("Invalid input. Please enter either a whole number or a number with upto two decimals")
+                    flash("Invalid input. Please enter a number with two decimal digits")
                     return redirect(url_for('account'))  
                 else:
                     # check if there is enough amount in the database account
