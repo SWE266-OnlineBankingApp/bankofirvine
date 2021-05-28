@@ -13,14 +13,6 @@ def create_db():
     cur.execute("PRAGMA foreign_keys = ON")
     cur.execute("CREATE TABLE IF NOT EXISTS Users(userId TEXT PRIMARY KEY, username TEXT UNIQUE, password TEXT, salt TEXT, name TEXT)")
     cur.execute("CREATE TABLE IF NOT EXISTS Accounts(accountId INTEGER PRIMARY KEY AUTOINCREMENT, currentBalance REAL, userId TEXT, FOREIGN KEY(userId) REFERENCES Users(userId))")
-    #insert an initial new user 
-    userid = create_random_userid()
-    password1 = '012345'
-    salt1 = create_salt()
-    password_hash = hash_password(password1,salt1)
-    cur.execute('INSERT INTO Users(userId, username, password, salt, name) VALUES(?, ?, ?, ?, ?)', (userid, 'testuser', password_hash, salt1, 'testname'))
-    # insert an account for intial user
-    cur.execute('INSERT INTO Accounts(currentBalance, userId) VALUES(?, ?)', (5000, userid))
 
     conn.commit()
     cur.close()

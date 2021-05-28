@@ -29,7 +29,7 @@ def home():
             #validate the username
             if(not validate_str(username)):
                 app.logger.error("username = {} failed validation".format(str(username)))
-                nfeedback = f"Username is invalid"
+                nfeedback = f"Username or Password is invalid"
                 return render_template('home.html',nfeedback=nfeedback)
 
             #code to check against DB 
@@ -37,7 +37,7 @@ def home():
             if (not result):
                 # invalid username
                 app.logger.error("On Login: details not found for username = {}".format(str(username)))
-                nfeedback = f"Username is invalid"
+                nfeedback = f"Username or Password is invalid"
                 return render_template('home.html',nfeedback=nfeedback)
             else:
                 #valid username. check password hash is correct here
@@ -56,7 +56,7 @@ def home():
                 else:
                     # password fail
                     app.logger.error("On Login: password invalid for username = {}".format(str(username)))
-                    nfeedback = f"Password is invalid"
+                    nfeedback = f"Username or Password is invalid"
                     return render_template('home.html',nfeedback=nfeedback)
         
         session.pop("USER",None)                                    
@@ -112,7 +112,7 @@ def register():
                 app.logger.error("On Register name invalid "+str(name))
                 return render_template('register.html', feedback=nfeedback)
             if (not validate_num(initial_balance_str)):
-                nfeedback = "Initial Balance must be a number with two decimal digits. Please try again."
+                nfeedback = "Initial Balance must be a number with two decimal digits in the form x.yy Please try again."
                 app.logger.error("On Register initial_balance invalid "+str(initial_balance_str))
                 return render_template('register.html', feedback=nfeedback)   
             if (not validate_str(password)):
@@ -178,7 +178,7 @@ def deposit():
                 app.logger.debug("We Have A New Deposit -> " + new_deposit)
                 if (not validate_num(new_deposit)):
                     # warning user the input format is invalid
-                    flash("Invalid input. Please enter a number with two decimal digits")
+                    flash("Invalid input. Please enter a number with two decimal digits in the form x.yy")
                     app.logger.error("Invalid input for deposit "+str(new_deposit))
                     return redirect(url_for('account'))  
                 else:
@@ -208,7 +208,7 @@ def withdraw():
                 if (not validate_num(new_withdraw)):
                     # warning user the input format is invalid
                     app.logger.error("Invalid input for withdraw "+str(new_withdraw))
-                    flash("Invalid input. Please enter a number with upto two decimals")
+                    flash("Invalid input. Please enter a number with upto two decimals in the form x.yy")
                     return redirect(url_for('account'))  
                 else:
                     # check if there is enough amount in the database account
