@@ -4,6 +4,7 @@ import re
 import os
 import hashlib
 import uuid
+import secrets
 
 comments = {
             "Fred" : "Great service! I'm banking here forever.",
@@ -28,12 +29,7 @@ def hash_password(password, salt):
 def create_random_userid():
     return str(uuid.uuid4())    
 
+def gen_key():
+    return secrets.token_urlsafe(16)
 
-# if __name__ == "__main__":
-#     print("test1", validate_num ("0"))
-#     print("test2", validate_num ("909"))
-#     print("test3", validate_num ("00.000"))
-#     print("test4", validate_num ("9723.37"))
-#     print("test5", validate_str ("shawn"))
-#     print("test6", validate_str ("..shawn"))
-#     print("test7", validate_str (".%shawn"))
+
