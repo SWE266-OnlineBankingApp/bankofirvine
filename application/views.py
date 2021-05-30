@@ -49,6 +49,7 @@ def home():
                 if (client_password_hash == stored_password_hash):
                     # password success
                     session["USER"] = userid    
+                    session.permanent = True
                     global account_holder
                     account_holder = get_name_from_userid(userid)  
                     app.logger.debug("Home Page: Account holder -> " + account_holder[0])
