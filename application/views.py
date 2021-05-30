@@ -1,7 +1,7 @@
 import sqlite3
 from application import app
 from flask import render_template, request, redirect, url_for, session, flash
-from application.functions.util import create_salt, hash_password, validate_str, validate_num, create_random_userid, comments
+from application.functions.util import create_salt, hash_password, validate_str, validate_num, create_random_userid, comments, validate_comments
 from application.functions.data_access import create_user, create_account, get_user_authentication_info, get_name_from_userid, deposit_and_update, get_currentBalance_from_userid, withdraw_and_update
 
 account_holder = None
@@ -74,9 +74,24 @@ def about():
             if(request.method=="POST"):
                 comment = request.form.get("comment")
                 name = get_name_from_userid(session.get("USER"))
-                comments[name[0]]=comment
-                app.logger.debug("About comment added")
+                if (not validate_comments(comment)):
+                    # warning user the input format is invalid
+                    app.logger.error("Invalid input for comment "+comment)
+#                     feedback = f"Invalid input. Please enter a sentence consist of letters, numbers, spaces, and periods."
+#                     return render_template("about.html", feedback = feedback)
+                else:
+                    # update comments
+                    app.logger.debug("Preparing comment")
+                    comments[name[0]]=comment
+                    # notify user deposit completed
+                    app.logger.debug("New comment updated")
+#                     feedback = f"Comment updated"
+#                     return render_template("about.html", feedback = feedback)
+
             return render_template('about.html', comments = comments)
+        else:
+            app.logger.error("Session not set when accessing about page")
+            error_handler("Session invalid on about")
 
         return redirect(url_for('home'))   
     except Exception as e:
