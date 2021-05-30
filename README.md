@@ -33,13 +33,13 @@ Run bankofirvine in production enviroment
 For Mac
 ```
 export FLASK_APP=run
-flask run
+flask run --cert=cert.pem --key=key.pem
 ```
 
 For Windows
 ```
 set FLASK_APP=run
-flask run
+flask run --cert=cert.pem --key=key.pem
 ```
 View bankofirvine app at: http://localhost:5000
 
