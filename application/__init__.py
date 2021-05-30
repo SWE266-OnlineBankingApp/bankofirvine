@@ -9,6 +9,6 @@ from application.functions.data_access import create_db
 from application.functions.util import gen_key
 app.config['SECRET_KEY'] = gen_key()
 app.config['PERMANENT_SESSION_LIFETIME']= timedelta(minutes=5)
-#app.config['SESSION_COOKIE_SECURE'] = True
-#app.config['SESSION_COOKIE_SAMESITE'] = 'Strict'
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Strict'
 create_db()
