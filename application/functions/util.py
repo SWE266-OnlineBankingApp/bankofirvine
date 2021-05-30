@@ -32,4 +32,6 @@ def create_random_userid():
 def gen_key():
     return secrets.token_urlsafe(16)
 
-
+# String validation for comments.
+def validate_comments(str_input):
+    return re.match("(^[A-Za-z,\\s]+[.]$)", str_input) != None
