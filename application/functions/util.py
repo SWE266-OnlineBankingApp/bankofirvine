@@ -34,4 +34,4 @@ def gen_key():
 
 # String validation for comments.
 def validate_comments(str_input):
-    return re.match("(^[A-Za-z,\\s]+[.]$)", str_input) != None
+    return re.match("(^[A-Za-z,.\\s]+)", str_input) != None
