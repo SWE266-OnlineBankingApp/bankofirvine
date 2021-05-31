@@ -29,19 +29,26 @@ python3 -m pip install -r requirements.txt
 ```
 
 ## 3. Run the app locally
-Run bankofirvine in production enviroment 
+Run bankofirvine in production enviroment
+
 For Mac
 ```
 export FLASK_APP=run
 flask run --cert=cert.pem --key=key.pem
 ```
 
-For Windows
+For Windows (cmd prompt)
 ```
 set FLASK_APP=run
 flask run --cert=cert.pem --key=key.pem
 ```
-View bankofirvine app at: http://localhost:5000
+For Windows (powershell)
+```
+$env:FLASK_APP="run"
+flask run --cert=cert.pem --key=key.pem
+```
+View bankofirvine app at: https://localhost:5000.
+Browser will show a warning that your connection isn't private (only the first time). This is because the security certificate is self-signed by the team for local testing purposes. You can view the certificate details by clicking on the error or view-certificate link. You can safely select "Continue to the localhost (unsafe)" option for your local testing. The warning will not show up again.
 
 ## 4. Instruction for bankofirvine user
 
