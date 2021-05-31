@@ -11,7 +11,7 @@
         SEE WHAT OUR OTHER CUSTOMERS HAVE TO SAY</p>
       <ul>
         {% for name, comment in comments.items() %}
-        <li><b class="text-primary">{{ name }}</b> : {{ comment | safe}}</li><br />
+        <li><b class="text-primary">{{ name }}</b> : {{ comment }}</li><br />
         {% endfor %}
       </ul>
       <form action="/about" method="POST" class="col-12 pb-3 " id="formregister">
