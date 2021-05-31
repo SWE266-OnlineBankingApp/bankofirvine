@@ -35,3 +35,11 @@ def gen_key():
 # String validation for comments.
 def validate_comments(str_input):
     return re.match("(^[A-Za-z,.\\s]+)", str_input) != None
+
+# Large number validation (e.g. some number too large to be deposit)
+def validate_largenum (num_input):
+    if (len(str(num_input).replace('.', '')) < 12+2):
+        return True
+    else:
+        return False
+

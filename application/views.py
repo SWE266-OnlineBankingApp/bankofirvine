@@ -1,7 +1,7 @@
 import sqlite3
 from application import app
 from flask import render_template, request, redirect, url_for, session, flash
-from application.functions.util import create_salt, hash_password, validate_str, validate_num, create_random_userid, comments, validate_comments
+from application.functions.util import create_salt, hash_password, validate_str, validate_num, create_random_userid, comments, validate_comments, validate_largenum
 from application.functions.data_access import create_user, create_account, get_user_authentication_info, get_name_from_userid, deposit_and_update, get_currentBalance_from_userid, withdraw_and_update
 
 account_holder = None
@@ -196,7 +196,12 @@ def deposit():
                     # warning user the input format is invalid
                     flash("Invalid input. Please enter a number with two decimal digits in the form x.yy")
                     app.logger.error("Invalid input for deposit "+str(new_deposit))
-                    return redirect(url_for('account'))  
+                    return redirect(url_for('account'))
+                elif (not validate_largenum(new_deposit)):
+                    # warning user the input format is invalid
+                    flash("The input amount is too big. Please enter a number within 1 trillion (or 12 digits for the integral part)")
+                    app.logger.error("Input too large for deposit "+str(new_deposit))
+                    return redirect(url_for('account'))
                 else:
                     # update balance in the database account
                     app.logger.debug("Accessing db")
