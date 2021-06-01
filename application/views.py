@@ -76,17 +76,17 @@ def about():
                 name = get_name_from_userid(session.get("USER"))
                 if (not validate_comments(comment)):
                     # warning user the input format is invalid
-                    app.logger.error("Invalid input for comment "+comment)
-#                     feedback = f"Invalid input. Please enter a sentence consist of letters, numbers, spaces, and periods."
-#                     return render_template("about.html", feedback = feedback)
+                    app.logger.error("Invalid input for comment {}".format(str(comment)))
+                    feedback = f"Invalid characters. Please enter a sentence consisting of letters, numbers, spaces, and periods."
+                    return render_template("about.html", comments=comments, feedback = feedback)
                 else:
                     # update comments
                     app.logger.debug("Preparing comment")
                     comments[name[0]]=comment
                     # notify user deposit completed
-                    app.logger.debug("New comment updated")
-#                     feedback = f"Comment updated"
-#                     return render_template("about.html", feedback = feedback)
+                    app.logger.debug("New comment Added")
+                    feedback = f"Comment Added"
+                    return render_template("about.html", comments=comments, feedback = feedback)
 
             return render_template('about.html', comments = comments)
         else:

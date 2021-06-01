@@ -14,6 +14,9 @@
         <li><b class="text-primary">{{ name }}</b> : {{ comment }}</li><br />
         {% endfor %}
       </ul>
+      {% if feedback %}
+      <p class="text-danger">{{ feedback }}</p>
+      {% endif %}
       <form action="/about" method="POST" class="col-12 pb-3 " id="formregister">
         <div class="form-group">
           <label class="text-dark">We'd love to hear from you too!</label>
@@ -24,9 +27,6 @@
             style="width: 80px;margin-left:1rem; ">Submit</button>
           <a href="{{ url_for('account') }}" class="btn btn-info btn-block mt-3 mb-5" style="margin-left:30rem; "
             role="button">Go Back</a>
-          {% if feedback %}
-          <p class="text-danger">{{ feedback }}</p>
-          {% endif %}
         </div>
       </form>
 
