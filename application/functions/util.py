@@ -34,7 +34,7 @@ def gen_key():
 
 # String validation for comments.
 def validate_comments(str_input):
-    return re.match("(^[A-Za-z,.\\s]+)", str_input) != None
+    return re.match("^[\.a-zA-Z0-9, ]*$", str_input) != None
 
 # Deposit/withdrawal validation - the amount should be less than 1 million each time.
 def validate_million (num_input):
