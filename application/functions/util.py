@@ -36,10 +36,16 @@ def gen_key():
 def validate_comments(str_input):
     return re.match("(^[A-Za-z,.\\s]+)", str_input) != None
 
-# Large number validation (e.g. some number too large to be deposit)
-def validate_largenum (num_input):
-    if (len(str(num_input).replace('.', '')) < 12+2):
+# Deposit/withdrawal validation - the amount should be less than 1 million each time.
+def validate_million (num_input):
+    if (len(str(num_input).replace('.', '')) < 6+2):
         return True
     else:
         return False
 
+# Total amount validation - the amount should be less than 1 trillion.
+def validate_trillion (num_input):
+    if (len(str(num_input).replace('.', '')) < 12+2):
+        return True
+    else:
+        return False
