@@ -214,7 +214,8 @@ def deposit():
 
         else:
             app.logger.error("Session not set when accessing account deposit")
-            error_handler("Session invalid on deposit")              
+            return redirect(url_for('home'))
+
     except Exception as e:
         error_handler(e)
     
@@ -246,7 +247,7 @@ def withdraw():
                         return redirect(url_for('account'))
         else:
             app.logger.error("Session not set when accessing account withdraw")
-            error_handler("Session invalid on withdraw")
-            
+            return redirect(url_for('home'))
+
     except Exception as e:
         error_handler(e)                   
