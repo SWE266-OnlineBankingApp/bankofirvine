@@ -74,8 +74,9 @@ python3 testUtil.py
 ### Application testing
 
 ---
-##Caution: The application testing now is no longer available due to the vulnerability mitigation. 
-We implemented this part based on Chrome browser in the beginning. However, after we mitigated the session hijacking vulnerability, the users can't access the application by Chrome anymore. Since the main task this time is to fix the vulnerabilities, we didn't maintain the functionalities here.    
+##Caution: Application tests are deprecated. 
+The application tests as detailed below require the use of the Chrome browser which presently blocks application execution due to the use of a self-signed certificate.
+The team will address this in future iterations of the application.
 
 ---
 Selenium was used to perform unit tests in the Chrome browser. 
