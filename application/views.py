@@ -1,7 +1,7 @@
 import sqlite3
 from application import app
 from flask import render_template, request, redirect, url_for, session, flash
-from application.functions.util import create_salt, hash_password, validate_str, validate_num, create_random_userid, comments, validate_comments, validate_largenum
+from application.functions.util import create_salt, hash_password, validate_str, validate_num, create_random_userid, comments, validate_comments, validate_million, validate_trillion
 from application.functions.data_access import create_user, create_account, get_user_authentication_info, get_name_from_userid, deposit_and_update, get_currentBalance_from_userid, withdraw_and_update
 
 account_holder = None
@@ -130,7 +130,7 @@ def register():
             if (not validate_num(initial_balance_str)):
                 nfeedback = "Initial Balance must be a number with two decimal digits in the form x.yy Please try again."
                 app.logger.error("On Register initial_balance invalid "+str(initial_balance_str))
-                return render_template('register.html', feedback=nfeedback)   
+                return render_template('register.html', feedback=nfeedback)
             if (not validate_str(password)):
                 nfeedback = "Password is not valid. Password may only contain digits 0-9, letters a-z, and special characters _-. only" 
                 app.logger.error("On Register password invalid "+str(password))
@@ -197,19 +197,20 @@ def deposit():
                     flash("Invalid input. Please enter a number with two decimal digits in the form x.yy")
                     app.logger.error("Invalid input for deposit "+str(new_deposit))
                     return redirect(url_for('account'))
-                elif (not validate_largenum(new_deposit)):
-                    # warning user the input format is invalid
-                    flash("The input amount is too big. Please enter a number within 1 trillion (or 12 digits for the integral part)")
-                    app.logger.error("Input too large for deposit "+str(new_deposit))
-                    return redirect(url_for('account'))
                 else:
                     # update balance in the database account
                     app.logger.debug("Accessing db")
                     userid = session.get("USER")
-                    deposit_and_update(new_deposit, userid)
-                    # notify user deposit completed
-                    flash("Deposit Completed")
-                    app.logger.debug("Deposit Completed")
+                    currentBalance = get_currentBalance_from_userid(userid)
+                    tempBalance = float(currentBalance[0]) + float(new_deposit)
+                    if (not validate_trillion(tempBalance)):
+                        flash("The input amount is too big. The balance should be less than 1 trillion.")
+                        app.logger.debug("Input too large for deposit "+str(new_deposit) + ". The balance will be too large.")
+                    else :
+                        deposit_and_update(new_deposit, userid)
+                        # notify user deposit completed
+                        flash("Deposit Completed")
+                        app.logger.debug("Deposit Completed")
                     return redirect(url_for('account'))
 
         else:
@@ -218,7 +219,6 @@ def deposit():
 
     except Exception as e:
         error_handler(e)
-    
 
 @app.route('/account/withdraw', methods=("POST",))
 def withdraw():
